@@ -1,6 +1,7 @@
 extends Node2D
 
 
+
 onready var timer = $fire_sprite_timer
 onready var spawn_time = 1
 onready var fire_sprite = load('res://firesprite.tscn')
@@ -10,22 +11,42 @@ var screen_y = OS.get_window_size().y
 var rand_x = randi() % screen_x
 var rand_y = randi() % screen_y
 
+onready var bkgd = $background
+onready var b_offset = Vector2(557, 405)
+onready var note = $death_note
+var n_offest = Vector2(-174, -104)
+onready var butn = $menu
+var m_offset = Vector2(-103, 35)
 
 func spawner():
 	if spawnable == true:
 		timer.start(spawn_time)
 	else:
 		timer.stop()
+	
 
-func _ready():
-	spawner()
-	print(screen_x)
-	print(screen_y)
-
-func _process(delta):
-	pass
 
 func _on_fire_sprite_timer_timeout():
 	var instance = fire_sprite.instance()
 	add_child(instance)
 	instance.position = Vector2(rand_x,rand_y)
+
+
+
+func _ready():
+	get_tree().paused = false
+	butn.pause_mode = Node.PAUSE_MODE_PROCESS
+  spawner()
+	print(screen_x)
+	print(screen_y)
+
+func _process(_delta):
+	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
+	note.set_position(get_node("player/Camera2D").get_camera_screen_center() + n_offest)
+	butn.set_position(get_node("player/Camera2D").get_camera_screen_center() + m_offset)
+	#moves background and label to correct positions relative to camera
+
+
+func _on_menu_pressed():
+	get_tree().change_scene("res://menu.tscn")
+	

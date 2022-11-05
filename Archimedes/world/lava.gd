@@ -1,9 +1,16 @@
 extends Sprite
-var MAX_HEIGHT = 0
-onready var HEIGHT = position.y - 300
-var speed = .5
 
-func _process(_delta):
-	if HEIGHT > MAX_HEIGHT:
-		position.y -= speed
-		HEIGHT = position.y - 300
+var MAX_HEIGHT = -764 #set max_height
+var down_offset = 340 #set initial offset
+#accounts for position of image being in center of image
+onready var HEIGHT = position.y - down_offset #set initial HEIGHT
+var speed = 1
+
+func _physics_process(_delta):
+	position.x = get_parent().get_node("player/Camera2D").get_camera_screen_center().x
+	#move lava image so it is always at the correct x position relative 
+	#to camera
+	if HEIGHT > MAX_HEIGHT: #only move  lava highter if lava 
+		position.y -= speed  # height has not yet exceeded max_height
+		HEIGHT = position.y - down_offset #update HEIGT variable
+
