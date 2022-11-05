@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://art/lava.png" type="Texture" id=1]
 [ext_resource path="res://lava.gd" type="Script" id=2]
+[ext_resource path="res://world.gd" type="Script" id=3]
 
 [node name="World" type="Node2D"]
+script = ExtResource( 3 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_left = -209.0
@@ -17,3 +19,7 @@ position = Vector2( 496, 861 )
 scale = Vector2( 1, 1.31 )
 texture = ExtResource( 1 )
 script = ExtResource( 2 )
+
+[node name="fire_sprite_timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]
