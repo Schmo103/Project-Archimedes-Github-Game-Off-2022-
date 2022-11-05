@@ -1,4 +1,5 @@
 extends Sprite
+
 var MAX_HEIGHT = -764 #set max_height
 var down_offset = 340 #set initial offset
 #accounts for position of image being in center of image
@@ -12,3 +13,4 @@ func _physics_process(_delta):
 	if HEIGHT > MAX_HEIGHT: #only move  lava highter if lava 
 		position.y -= speed  # height has not yet exceeded max_height
 		HEIGHT = position.y - down_offset #update HEIGT variable
+
