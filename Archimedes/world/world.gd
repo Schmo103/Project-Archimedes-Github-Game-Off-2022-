@@ -8,8 +8,8 @@ onready var fire_sprite = load('res://firesprite.tscn')
 var spawnable = true
 var screen_x = OS.get_window_size().x
 var screen_y = OS.get_window_size().y
-var rand_x = randi() % screen_x
-var rand_y = randi() % screen_y
+onready var rand_x = randi() % int(screen_x)
+onready var rand_y = randi() % int(screen_y)
 
 onready var bkgd = $background
 onready var b_offset = Vector2(557, 405)
@@ -36,7 +36,7 @@ func _on_fire_sprite_timer_timeout():
 func _ready():
 	get_tree().paused = false
 	butn.pause_mode = Node.PAUSE_MODE_PROCESS
-  spawner()
+	spawner()
 	print(screen_x)
 	print(screen_y)
 
