@@ -4,6 +4,9 @@ var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
+var fric = 600
+var air_fric = 10
+var MAXSPEED = 400
 
 var sword_pos = 1 #-1 is left, 1 is right
 
@@ -35,13 +38,44 @@ func die(): #function cleanup after death and display alert
 	world.get_node("menu").visible = true
 
 func _physics_process(_delta):
-	velocity.x = 0 #velocity left/right resets
+	if(is_on_floor()):
+		if(velocity.x > 0):
+			velocity.x -= fric
+			if(velocity.x < 0): #clamp x
+				velocity.x = 0
+		if(velocity.x < 0):
+			velocity.x += fric
+			if(velocity.x > 0): #clamp x
+				velocity.x = 0
+	else:
+		if(velocity.x > 0):
+			velocity.x -= air_fric
+			if(velocity.x < 0): #clamp x
+				velocity.x = 0
+		if(velocity.x < 0):
+			velocity.x += air_fric 
+			if(velocity.x > 0): #clamp x
+				velocity.x = 0
+		if(velocity.y > 0):
+			velocity.y -= air_fric 
+			if(velocity.y < 0): #clamp x
+				velocity.y = 0
+		if(velocity.y < 0):
+			velocity.y += air_fric 
+			if(velocity.y > 0): #clamp x
+				velocity.y = 0
 	jump = false 
 	if Input.is_action_pressed("ui_a"): #for moving left
-		velocity.x -= speed
+		if (velocity.x - speed >= -MAXSPEED):
+			velocity.x -= speed
+		elif (velocity.x > -MAXSPEED):
+			velocity.x = -MAXSPEED
 		set_sword_left()
 	if Input.is_action_pressed("ui_d"): #for moving right
-		velocity.x += speed
+		if (velocity.x + speed <= MAXSPEED):
+			velocity.x += speed
+		elif (velocity.x < MAXSPEED):
+			velocity.x = MAXSPEED
 		set_sword_right()
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
