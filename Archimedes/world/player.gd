@@ -4,7 +4,7 @@ var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
-var fric = 500
+var fric = 300
 var air_fric = 400
 var MAXSPEED = 350
 
@@ -106,6 +106,9 @@ func _physics_process(_delta):
 			velocity.y -= jump_speed #jumps player velocity
 	else:
 		velocity.y += grav #adds gravity
+	if is_on_ceiling():
+		if velocity.y < -1:
+			velocity.y = 0 
 	move_and_slide(velocity, Vector2(0, -1)) #moves player
 	
 	#check if still alive
