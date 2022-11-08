@@ -8,8 +8,10 @@ onready var fire_sprite = load('res://firesprite.tscn')
 var spawnable = true
 var screen_x = OS.get_window_size().x
 var screen_y = OS.get_window_size().y
+
 onready var rand_x
 onready var rand_y 
+
 
 onready var bkgd = $background
 onready var b_offset = Vector2(557, 405)
