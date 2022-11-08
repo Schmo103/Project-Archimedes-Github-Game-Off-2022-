@@ -1,17 +1,20 @@
 extends KinematicBody2D
 
 
-onready var timer = $NewSpawnerTimer
 onready var spawn_time = 5
-
-func spawner():
-	for i in 10:
-		timer.start(spawn_time)
-
+onready var player_x = get_parent().get_node("player").get_position().x
+onready var player_y = get_parent().get_node("player").get_position().y
+onready var x_targ
+onready var y_targ
 func _ready():
-	spawner()
+	 pass
 
 
-func _on_NewSpawnerTimer_timeout():
-	print("stopped")
-	
+func realtimereset():
+	player_x = get_parent().get_node("player").position.x
+	player_y = get_parent().get_node("player").position.y
+
+
+func _physics_process(_delta):
+	realtimereset()
+	move_and_slide(Vector2(player_x - self.position.x, player_y - self.position.y))
