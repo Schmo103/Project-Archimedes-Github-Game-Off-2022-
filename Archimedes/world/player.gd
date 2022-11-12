@@ -9,7 +9,7 @@ var air_fric = 400
 var MAXSPEED = 350
 
 var sword_posi = 1 #-1 is left, 1 is right
-var sword_swinging = false
+var sword_swinging = true
 var reach = 50
 
 var game_over = false
