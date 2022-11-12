@@ -23,6 +23,7 @@ onready var note = $death_note
 var n_offest = Vector2(-174, -104)
 onready var butn = $menu
 var m_offset = Vector2(-103, 35)
+onready var fog = get_node("wavy shader")
 
 func spawner():
 	if spawnable == true:
@@ -56,6 +57,7 @@ func _process(_delta):
 	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
 	note.set_position(get_node("player/Camera2D").get_camera_screen_center() + n_offest)
 	butn.set_position(get_node("player/Camera2D").get_camera_screen_center() + m_offset)
+	#fog.position = get_node("player/Camera2D").get_camera_screen_center()
 	#moves background and label to correct positions relative to camera
 	
 	
