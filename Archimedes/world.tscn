@@ -1,9 +1,11 @@
-[gd_scene load_steps=12 format=2]
+
+[gd_scene load_steps=25 format=2]
+
 
 [ext_resource path="res://art/lava.png" type="Texture" id=1]
 [ext_resource path="res://world/lava.gd" type="Script" id=2]
 [ext_resource path="res://art/icon.png" type="Texture" id=3]
-[ext_resource path="res://tilesets/tile_set.tres" type="TileSet" id=4]
+[ext_resource path="res://art/molten_tileset1_test.png" type="Texture" id=4]
 [ext_resource path="res://world/player.gd" type="Script" id=5]
 [ext_resource path="res://world/world.gd" type="Script" id=6]
 [ext_resource path="res://art/sword.png" type="Texture" id=7]
@@ -25,8 +27,371 @@ shader = SubResource( 2 )
 shader_param/flash = 0.0
 shader_param/color = Color( 1, 1, 1, 1 )
 
+[sub_resource type="Shader" id=16]
+code = "shader_type canvas_item;
+
+// Gonkee's fog shader for Godot 3 - full tutorial https://youtu.be/QEaTsz_0o44
+// If you use this shader, I would prefer it if you gave credit to me and my channel
+
+uniform vec3 color = vec3(0.50, 0.4, 0.4);
+uniform int OCTAVES = 4;
+
+float rand(vec2 coord){
+	return fract(sin(dot(coord, vec2(56, 78)) * 1000.0) * 1000.0);
+}
+
+float noise(vec2 coord){
+	vec2 i = floor(coord);
+	vec2 f = fract(coord);
+
+	// 4 corners of a rectangle surrounding our point
+	float a = rand(i);
+	float b = rand(i + vec2(1.0, 0.0));
+	float c = rand(i + vec2(0.0, 1.0));
+	float d = rand(i + vec2(1.0, 1.0));
+
+	vec2 cubic = f * f * (3.0 - 2.0 * f);
+
+	return mix(a, b, cubic.x) + (c - a) * cubic.y * (1.0 - cubic.x) + (d - b) * cubic.x * cubic.y;
+}
+
+float fbm(vec2 coord){
+	float value = 0.0;
+	float scale = 0.5;
+
+	for(int i = 0; i < OCTAVES; i++){
+		value += noise(coord) * scale;
+		coord *= 2.0;
+		scale *= 0.5;
+	}
+	return value;
+}
+
+void fragment() {
+	vec2 coord = UV * 20.0;
+
+	vec2 motion = vec2( fbm(coord + vec2(TIME * -0.5, TIME * 0.5)) );
+
+	float final = fbm(coord + motion);
+
+	COLOR = vec4(color, final * 0.5);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=17]
+shader = SubResource( 16 )
+shader_param/color = Vector3( 0.5, 0.4, 0.4 )
+shader_param/OCTAVES = 4
+
+[sub_resource type="ConvexPolygonShape2D" id=2]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=4]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 16.7015, 0, 16.7015 )
+
+[sub_resource type="ConvexPolygonShape2D" id=14]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=15]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=5]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=6]
+points = PoolVector2Array( 0, 0, 16.4858, 16.5515, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=7]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=8]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=9]
+points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=10]
+points = PoolVector2Array( 15.1292, 16.9172, 32, 0, 32, 32, 0, 32 )
+
+[sub_resource type="ConvexPolygonShape2D" id=11]
+points = PoolVector2Array( 0, 0, 32, 0, 31.8622, 17.0891, 0, 16.8953 )
+
+[sub_resource type="ConvexPolygonShape2D" id=12]
+points = PoolVector2Array( 0, 0, 32, 0, 31.8403, 16.8953, 0, 16.8953 )
+
+[sub_resource type="TileSet" id=13]
+0/name = "molten_tileset1_test.png 0"
+0/texture = ExtResource( 4 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 32, -32, 32, 32 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape = SubResource( 2 )
+0/shape_one_way = false
+0/shape_one_way_margin = 1.0
+0/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 2 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+0/z_index = 0
+2/name = "molten_tileset1_test.png 2"
+2/texture = ExtResource( 4 )
+2/tex_offset = Vector2( 0, 0 )
+2/modulate = Color( 1, 1, 1, 1 )
+2/region = Rect2( 64, 0, 32, 32 )
+2/tile_mode = 0
+2/occluder_offset = Vector2( 0, 0 )
+2/navigation_offset = Vector2( 0, 0 )
+2/shape_offset = Vector2( 0, 0 )
+2/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+2/shape = SubResource( 5 )
+2/shape_one_way = false
+2/shape_one_way_margin = 1.0
+2/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 5 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+2/z_index = 0
+3/name = "molten_tileset1_test.png 3"
+3/texture = ExtResource( 4 )
+3/tex_offset = Vector2( 0, 0 )
+3/modulate = Color( 1, 1, 1, 1 )
+3/region = Rect2( 96, 0, 32, 32 )
+3/tile_mode = 0
+3/occluder_offset = Vector2( 0, 0 )
+3/navigation_offset = Vector2( 0, 0 )
+3/shape_offset = Vector2( 0, 0 )
+3/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+3/shape = SubResource( 6 )
+3/shape_one_way = false
+3/shape_one_way_margin = 1.0
+3/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 6 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+3/z_index = 0
+4/name = "molten_tileset1_test.png 4"
+4/texture = ExtResource( 4 )
+4/tex_offset = Vector2( 0, 0 )
+4/modulate = Color( 1, 1, 1, 1 )
+4/region = Rect2( 0, 32, 32, 32 )
+4/tile_mode = 0
+4/occluder_offset = Vector2( 0, 0 )
+4/navigation_offset = Vector2( 0, 0 )
+4/shape_offset = Vector2( 0, 0 )
+4/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+4/shape = SubResource( 7 )
+4/shape_one_way = false
+4/shape_one_way_margin = 1.0
+4/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 7 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+4/z_index = 0
+5/name = "molten_tileset1_test.png 5"
+5/texture = ExtResource( 4 )
+5/tex_offset = Vector2( 0, 0 )
+5/modulate = Color( 1, 1, 1, 1 )
+5/region = Rect2( 32, 32, 32, 32 )
+5/tile_mode = 0
+5/occluder_offset = Vector2( 0, 0 )
+5/navigation_offset = Vector2( 0, 0 )
+5/shape_offset = Vector2( 0, 0 )
+5/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+5/shape = SubResource( 8 )
+5/shape_one_way = false
+5/shape_one_way_margin = 1.0
+5/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 8 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+5/z_index = 0
+6/name = "molten_tileset1_test.png 6"
+6/texture = ExtResource( 4 )
+6/tex_offset = Vector2( 0, 0 )
+6/modulate = Color( 1, 1, 1, 1 )
+6/region = Rect2( 64, 32, 32, 32 )
+6/tile_mode = 0
+6/occluder_offset = Vector2( 0, 0 )
+6/navigation_offset = Vector2( 0, 0 )
+6/shape_offset = Vector2( 0, 0 )
+6/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+6/shape = SubResource( 9 )
+6/shape_one_way = false
+6/shape_one_way_margin = 1.0
+6/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 9 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+6/z_index = 0
+7/name = "molten_tileset1_test.png 7"
+7/texture = ExtResource( 4 )
+7/tex_offset = Vector2( 0, 0 )
+7/modulate = Color( 1, 1, 1, 1 )
+7/region = Rect2( 96, 32, 32, 32 )
+7/tile_mode = 0
+7/occluder_offset = Vector2( 0, 0 )
+7/navigation_offset = Vector2( 0, 0 )
+7/shape_offset = Vector2( 0, 0 )
+7/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+7/shape = SubResource( 10 )
+7/shape_one_way = false
+7/shape_one_way_margin = 1.0
+7/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 10 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+7/z_index = 0
+8/name = "molten_tileset1_test.png 8"
+8/texture = ExtResource( 4 )
+8/tex_offset = Vector2( 0, 0 )
+8/modulate = Color( 1, 1, 1, 1 )
+8/region = Rect2( 0, 64, 32, 32 )
+8/tile_mode = 0
+8/occluder_offset = Vector2( 0, 0 )
+8/navigation_offset = Vector2( 0, 0 )
+8/shape_offset = Vector2( 0, 0 )
+8/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+8/shape = SubResource( 11 )
+8/shape_one_way = false
+8/shape_one_way_margin = 1.0
+8/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 11 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+8/z_index = 0
+9/name = "molten_tileset1_test.png 9"
+9/texture = ExtResource( 4 )
+9/tex_offset = Vector2( 0, 0 )
+9/modulate = Color( 1, 1, 1, 1 )
+9/region = Rect2( 32, 64, 32, 32 )
+9/tile_mode = 0
+9/occluder_offset = Vector2( 0, 0 )
+9/navigation_offset = Vector2( 0, 0 )
+9/shape_offset = Vector2( 0, 0 )
+9/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+9/shape = SubResource( 12 )
+9/shape_one_way = false
+9/shape_one_way_margin = 1.0
+9/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 12 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+9/z_index = 0
+10/name = "molten_tileset1_test.png 10"
+10/texture = ExtResource( 4 )
+10/tex_offset = Vector2( 0, 0 )
+10/modulate = Color( 1, 1, 1, 1 )
+10/region = Rect2( 64, 64, 32, 32 )
+10/tile_mode = 0
+10/occluder_offset = Vector2( 0, 0 )
+10/navigation_offset = Vector2( 0, 0 )
+10/shape_offset = Vector2( 0, 0 )
+10/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+10/shape = SubResource( 4 )
+10/shape_one_way = false
+10/shape_one_way_margin = 1.0
+10/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 4 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+10/z_index = 0
+11/name = "molten_tileset1_test.png 11"
+11/texture = ExtResource( 4 )
+11/tex_offset = Vector2( 0, 0 )
+11/modulate = Color( 1, 1, 1, 1 )
+11/region = Rect2( 32, 0, 32, 32 )
+11/tile_mode = 1
+11/autotile/bitmask_mode = 0
+11/autotile/bitmask_flags = [ Vector2( 0, 1 ), 260, Vector2( 0, 2 ), 4, Vector2( 1, 0 ), 320, Vector2( 1, 1 ), 325, Vector2( 1, 2 ), 5, Vector2( 2, 0 ), 64, Vector2( 2, 1 ), 65, Vector2( 2, 2 ), 1 ]
+11/autotile/icon_coordinate = Vector2( 0, 0 )
+11/autotile/tile_size = Vector2( 32, 32 )
+11/autotile/spacing = 0
+11/autotile/occluder_map = [  ]
+11/autotile/navpoly_map = [  ]
+11/autotile/priority_map = [  ]
+11/autotile/z_index_map = [  ]
+11/occluder_offset = Vector2( 0, 0 )
+11/navigation_offset = Vector2( 0, 0 )
+11/shape_offset = Vector2( 0, 0 )
+11/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+11/shape = SubResource( 14 )
+11/shape_one_way = false
+11/shape_one_way_margin = 1.0
+11/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 14 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+11/z_index = 0
+12/name = "molten_tileset1_test.png 12"
+12/texture = ExtResource( 4 )
+12/tex_offset = Vector2( 0, 0 )
+12/modulate = Color( 1, 1, 1, 1 )
+12/region = Rect2( 0, 0, 32, 32 )
+12/tile_mode = 0
+12/occluder_offset = Vector2( 0, 0 )
+12/navigation_offset = Vector2( 0, 0 )
+12/shape_offset = Vector2( 0, 0 )
+12/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+12/shape = SubResource( 15 )
+12/shape_one_way = false
+12/shape_one_way_margin = 1.0
+12/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 15 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+12/z_index = 0
+
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 31, 31 )
+
+[sub_resource type="Environment" id=18]
+background_mode = 4
+tonemap_mode = 3
+glow_enabled = true
+glow_bloom = 0.54
+glow_blend_mode = 0
+adjustment_enabled = true
 
 [node name="World" type="Node2D"]
 script = ExtResource( 6 )
@@ -36,16 +401,25 @@ margin_left = -110.0
 margin_top = -156.0
 margin_right = 1050.0
 margin_bottom = 654.0
-color = Color( 0.258824, 0.0392157, 0.313726, 1 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="wavy shader" type="Sprite" parent="."]
+material = SubResource( 17 )
+position = Vector2( 543, -132 )
+scale = Vector2( 24.4688, 23.3437 )
+texture = ExtResource( 3 )
 
 [node name="terrain" type="TileMap" parent="."]
-tile_set = ExtResource( 4 )
+tile_set = SubResource( 13 )
+cell_size = Vector2( 32, 32 )
 format = 1
-tile_data = PoolIntArray( -851965, 0, 0, -851964, 0, 0, -851963, 0, 0, -786426, 0, 0, -720888, 0, 0, -655350, 0, 0, -655346, 0, 0, -655339, 0, 0, -589813, 0, 0, -589812, 0, 0, -589811, 0, 0, -589809, 0, 0, -589808, 0, 0, -589807, 0, 0, -589806, 0, 0, -589802, 0, 0, -524269, 0, 0, -524268, 0, 0, -524264, 0, 0, -393219, 0, 0, -393218, 0, 0, -393217, 0, 0, -458740, 0, 0, -458739, 0, 0, -458738, 0, 0, -458737, 0, 0, -458729, 0, 0, -393216, 0, 0, -393215, 0, 0, -393214, 0, 0, -393206, 0, 0, -393200, 0, 0, -393195, 0, 0, -327677, 0, 0, -327672, 0, 0, -327663, 0, 0, -327662, 0, 0, -327661, 0, 0, -327658, 0, 0, -262140, 0, 0, -262139, 0, 0, -262138, 0, 0, -262120, 0, 0, -196601, 0, 0, -196585, 0, 0, -131069, 0, 0, -131063, 0, 0, -131062, 0, 0, -131061, 0, 0, -131053, 0, 0, -131052, 0, 0, -131051, 0, 0, -131050, 0, 0, -65536, 0, 0, -65535, 0, 0, -65528, 0, 0, -65518, 0, 0, 3, 0, 0, 4, 0, 0, 5, 0, 0, 6, 0, 0, 17, 0, 0, 65543, 0, 0, 65551, 0, 0, 131080, 0, 0, 131086, 0, 0, 196615, 0, 0, 196618, 0, 0, 196619, 0, 0, 196620, 0, 0, 196621, 0, 0, 262153, 0, 0, 327685, 0, 0, 327686, 0, 0, 327687, 0, 0, 327688, 0, 0 )
+
+tile_data = PoolIntArray( -1572829, 12, 0, -1572828, 11, 0, -1572827, 2, 0, -1507293, 8, 0, -1507292, 9, 0, -1507291, 10, 0, -1441781, 12, 0, -1441780, 2, 0, -1441768, 12, 0, -1441767, 2, 0, -1376245, 8, 0, -1376244, 10, 0, -1376232, 8, 0, -1376231, 10, 0, -1376225, 12, 0, -1376224, 11, 0, -1376223, 2, 0, -1310689, 8, 0, -1310688, 9, 0, -1310687, 10, 0, -1179640, 12, 0, -1179639, 11, 0, -1179638, 2, 0, -1179634, 12, 0, -1179633, 11, 0, -1179632, 2, 0, -1179627, 12, 0, -1179626, 11, 0, -1179625, 2, 0, -1179621, 12, 0, -1179620, 11, 0, -1179619, 2, 0, -1114104, 8, 0, -1114103, 9, 0, -1114102, 10, 0, -1114098, 8, 0, -1114097, 9, 0, -1114096, 10, 0, -1114091, 8, 0, -1114090, 9, 0, -1114089, 10, 0, -1114085, 8, 0, -1114084, 9, 0, -1114083, 10, 0, -1048573, 12, 0, -1048572, 11, 0, -1048571, 2, 0, -983037, 8, 0, -983036, 9, 0, -983035, 10, 0, -851970, 12, 0, -851969, 11, 0, -917504, 11, 0, -917503, 2, 0, -786434, 8, 0, -786433, 9, 0, -851968, 9, 0, -851967, 10, 0, -720901, 12, 0, -720900, 2, 0, -655365, 8, 0, -655364, 10, 0, -589826, 12, 0, -589825, 2, 0, -524290, 8, 0, -524289, 10, 0, -589822, 12, 0, -589821, 11, 0, -589820, 2, 0, -524286, 8, 0, -524285, 9, 0, -524284, 10, 0, -524279, 12, 0, -524278, 2, 0, -458743, 8, 0, -458742, 10, 0, -458739, 12, 0, -458738, 2, 0, -393203, 8, 0, -393202, 10, 0, -327663, 12, 0, -327662, 3, 0, -262127, 4, 0, -262126, 5, 0, -262125, 3, 0, -196591, 4, 0, -196590, 5, 0, -196589, 5, 0, -196588, 3, 0, -131055, 4, 0, -131054, 5, 0, -131053, 5, 0, -131052, 5, 0, -131051, 3, 0, -65519, 4, 0, -65518, 5, 0, -65517, 5, 0, -65516, 5, 0, -65515, 5, 0, -65514, 11, 0, -65513, 11, 0, -65512, 2, 0, 17, 8, 0, 18, 9, 0, 19, 9, 0, 20, 9, 0, 21, 8, 0, 22, 9, 0, 23, 9, 0, 24, 10, 0, 131097, 12, 0, 131098, 11, 0, 131099, 11, 0, 131100, 2, 0, 196633, 8, 0, 196634, 9, 0, 196635, 9, 0, 196636, 10, 0, 327702, 12, 0, 327703, 11, 0, 327704, 2, 0, 393238, 8, 0, 393239, 9, 0, 393240, 10, 0, 458766, 12, 0, 458767, 3, 0, 458771, 12, 0, 458772, 11, 0, 458773, 2, 0, 524302, 4, 0, 524303, 5, 0, 524304, 3, 0, 524307, 8, 0, 524308, 9, 0, 524309, 10, 0, 589833, 12, 0, 589834, 11, 0, 589835, 2, 0, 589838, 4, 0, 589839, 5, 0, 589840, 2, 0, 655369, 8, 0, 655370, 9, 0, 655371, 10, 0, 655374, 8, 0, 655375, 9, 0, 655376, 10, 0 )
 
 [node name="player" type="KinematicBody2D" parent="."]
-material = SubResource( 3 )
-position = Vector2( 393, 250 )
+position = Vector2( 326, 230 )
+scale = Vector2( 0.5, 0.5 )
+
 script = ExtResource( 5 )
 __meta__ = {
 "_edit_group_": true
@@ -60,6 +434,7 @@ visible = false
 shape = SubResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
+zoom = Vector2( 0.5, 0.5 )
 smoothing_enabled = true
 
 [node name="sword" type="Sprite" parent="player"]
@@ -96,6 +471,9 @@ margin_top = 335.0
 margin_right = 513.0
 margin_bottom = 394.0
 text = "Menu"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 18 )
 
 [connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]
 [connection signal="pressed" from="menu" to="." method="_on_menu_pressed"]
