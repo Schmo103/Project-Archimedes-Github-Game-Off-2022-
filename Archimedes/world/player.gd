@@ -1,12 +1,12 @@
 extends KinematicBody2D
-var speed = 250 #set movement speed
+var speed = 100 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
-var fric = 300
-var air_fric = 400
-var MAXSPEED = 350
+var fric = 20
+var air_fric = 10
+var MAXSPEED = 300
 
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = true
@@ -19,6 +19,13 @@ onready var world = get_parent()
 
 func _ready():
 	$Camera2D.current = true #make camera "the camera"
+
+	
+func flash(time):
+	material.set("shader_param/flash", 1)
+	yield(get_tree().create_timer(time), "timeout")
+	material.set("shader_param/flash", 0)
+	
 	
 func set_sword_right(): #puts sword in right position
 	sword_posi = 1 
@@ -109,7 +116,7 @@ func _physics_process(_delta):
 	if is_on_ceiling():
 		if velocity.y < -1:
 			velocity.y = 0 
-	move_and_slide(velocity, Vector2(0, -1)) #moves player
+	move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false) #moves player
 	
 	#check if still alive
 	if position.y >= get_parent().get_node("Lava").HEIGHT:

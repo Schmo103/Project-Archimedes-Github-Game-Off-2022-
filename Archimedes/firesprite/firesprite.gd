@@ -27,11 +27,11 @@ func _physics_process(_delta):
 		if (player - self.position).length() < collide_range:
 			coasting = false
 			falling = true
-		move_and_slide(velocity)
+		move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false)
 	if attacking:
 		realtimereset()
 		velocity += position.direction_to(player) * speed
-		move_and_slide(velocity)
+		move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false)
 		if (player - self.position).length() < coast_range:
 			attacking = false
 			coasting = true
@@ -40,6 +40,6 @@ func _physics_process(_delta):
 		
 	if falling:
 # warning-ignore:return_value_discarded
-		move_and_slide(velocity + gravity)
+		move_and_slide(velocity + gravity, Vector2(0, -1), false, 4, 0.785398, false)
 		velocity = Vector2(0,0)
 
