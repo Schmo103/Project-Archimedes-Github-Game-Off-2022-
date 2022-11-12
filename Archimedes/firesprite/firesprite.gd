@@ -17,4 +17,4 @@ func realtimereset():
 
 func _physics_process(_delta):
 	realtimereset()
-	move_and_slide(Vector2(player_x - self.position.x, player_y - self.position.y))
+	move_and_slide(Vector2(player_x - self.position.x, player_y - self.position.y), Vector2(0, -1), false, 4, 0.785398, false)

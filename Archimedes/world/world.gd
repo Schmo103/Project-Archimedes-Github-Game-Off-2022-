@@ -1,5 +1,7 @@
 extends Node2D
 
+var terrain = "/root/World/terrain"
+var lava = "/root/World/Lava"
 
 
 onready var timer = $fire_sprite_timer
