@@ -1,4 +1,6 @@
+
 [gd_scene load_steps=27 format=2]
+
 
 [ext_resource path="res://art/lava.png" type="Texture" id=1]
 [ext_resource path="res://world/lava.gd" type="Script" id=2]
@@ -110,6 +112,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 31.8403, 16.8953, 0, 16.8953 )
 0/shape_offset = Vector2( 0, 0 )
 0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 0/shape_one_way = false
+
 0/shape_one_way_margin = 1.0
 0/shapes = [ {
 "autotile_coord": Vector2( 0, 0 ),
@@ -118,6 +121,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 31.8403, 16.8953, 0, 16.8953 )
 "shape": null,
 "shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
 } ]
+
 0/z_index = 0
 2/name = "molten_tileset1_test.png 2"
 2/texture = ExtResource( 4 )
@@ -468,5 +472,6 @@ text = "Menu"
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 18 )
 
+[connection signal="firesprite_hits_player" from="." to="player" method="_on_World_firesprite_hits_player"]
 [connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]
 [connection signal="pressed" from="menu" to="." method="_on_menu_pressed"]

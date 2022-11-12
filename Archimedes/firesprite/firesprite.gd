@@ -1,11 +1,12 @@
 extends KinematicBody2D
 
-var speed = 1000
+var speed = 400
+
 
 onready var spawn_time = 10
 onready var player = get_parent().get_node("player").get_position()
 onready var attacking = true
-onready var falling = false
+onready var exploding = false
 onready var coasting = false
 var collide_range = 20
 var coast_range = 500
@@ -26,7 +27,7 @@ func _physics_process(_delta):
 	if coasting:
 		if (player - self.position).length() < collide_range:
 			coasting = false
-			falling = true
+			exploding = true
 		move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false)
 	if attacking:
 		realtimereset()
@@ -38,8 +39,9 @@ func _physics_process(_delta):
 		else:
 			velocity = Vector2(0,0)
 		
-	if falling:
+	if exploding:
 # warning-ignore:return_value_discarded
-		move_and_slide(velocity + gravity, Vector2(0, -1), false, 4, 0.785398, false)
-		velocity = Vector2(0,0)
+#		emit_signal("firesprite_hits_player")
+		get_parent().firesprite_ex()
+		self.queue_free()
 

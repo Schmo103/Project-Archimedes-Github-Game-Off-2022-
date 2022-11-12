@@ -18,13 +18,14 @@ onready var world = get_parent()
 
 
 func _ready():
+	
 	$Camera2D.current = true #make camera "the camera"
 	flash(2)
 	
 func flash(time):
-	material.set("shader_param/flash", 1)
+	material.set("shader_param/flash", 1.0)
 	yield(get_tree().create_timer(time), "timeout")
-	material.set("shader_param/flash", 0)
+	material.set("shader_param/flash", 0.0)
 	
 	
 func set_sword_right(): #puts sword in right position
@@ -122,3 +123,7 @@ func _physics_process(_delta):
 	if position.y >= get_parent().get_node("Lava").HEIGHT:
 		#checks if player has fallen below lava
 		die()
+
+
+func _on_World_firesprite_hits_player():
+	flash(0.1)
