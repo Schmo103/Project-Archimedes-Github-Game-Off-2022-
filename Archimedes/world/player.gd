@@ -5,8 +5,8 @@ var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
 var fric = 40
-var air_fric = 20
-var MAXSPEED = 150
+var air_fric = 0
+var MAXSPEED = 200
 
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = true
@@ -20,7 +20,6 @@ onready var world = get_parent()
 func _ready():
 	
 	$Camera2D.current = true #make camera "the camera"
-	flash(2)
 	
 func flash(time):
 	material.set("shader_param/flash", 1.0)
@@ -87,13 +86,13 @@ func _physics_process(_delta):
 #			if(velocity.y > 0): #clamp x
 #				velocity.y = 0
 	jump = false 
-	if Input.is_action_pressed("ui_a"): #for moving left
+	if Input.is_action_pressed("ui_a") and is_on_floor(): #for moving left
 		if (velocity.x - speed >= -MAXSPEED):
 			velocity.x -= speed
 		elif (velocity.x > -MAXSPEED):
 			velocity.x = -MAXSPEED
 		set_sword_left()
-	if Input.is_action_pressed("ui_d"): #for moving right
+	if Input.is_action_pressed("ui_d") and is_on_floor(): #for moving right
 		if (velocity.x + speed <= MAXSPEED):
 			velocity.x += speed
 		elif (velocity.x < MAXSPEED):
