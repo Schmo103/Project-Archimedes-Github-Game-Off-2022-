@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="CanvasItemMaterial" id=4]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0, 0.0129032, 0.748387 )
+colors = PoolColorArray( 0.160784, 0, 1, 0.152941, 1, 0.980392, 0, 1, 1, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="ParticlesMaterial" id=5]
+flag_disable_z = true
+direction = Vector3( 0, -1, 0 )
+spread = 32.08
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 532.08
+initial_velocity_random = 0.01
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 0.2
+color_ramp = SubResource( 3 )
+
+[sub_resource type="StreamTexture" id=6]
+flags = 4
+load_path = "res://.import/smudge2.png-d44eabedfb5bb41256eb91964412b4b7.stex"
+
+[node name="Particles2D2" type="Particles2D"]
+material = SubResource( 4 )
+position = Vector2( 239, 105 )
+scale = Vector2( 0.1, 0.1 )
+amount = 33
+explosiveness = 0.03
+fixed_fps = 30
+local_coords = false
+process_material = SubResource( 5 )
+texture = SubResource( 6 )
