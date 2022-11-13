@@ -50,8 +50,6 @@ func _ready():
 	get_tree().paused = false
 	butn.pause_mode = Node.PAUSE_MODE_PROCESS
 	spawner()
-	print(screen_x)
-	print(screen_y)
 
 func _process(_delta):
 	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
