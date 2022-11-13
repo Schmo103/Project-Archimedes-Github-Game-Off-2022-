@@ -12,7 +12,7 @@ var max_speed = 100
 var gravity = 130
 var fric = 60
 var air_fric = 70
-var zoom = 70
+var zoom = 90
 
 var going_right = false
 var going_left = false
@@ -32,6 +32,9 @@ var vx = 0
 func _ready():
 	terrain = get_parent().terrain
 	lava = get_parent().lava
+#	print(str(fall_length(-1)))
+#	print(lava)
+#	print(str(get_node(lava).HEIGHT))
 #	print(str(get_tile(position)))
 #	print(str(is_dip()))
 	
@@ -60,6 +63,8 @@ func _integrate_forces(s):
 			if lv.x >= zoom:
 				right = false
 				left = false
+			elif lv.x <= 30:
+				switch_x_dir()
 		
 	
 	
@@ -149,6 +154,9 @@ func get_tile(pos):
 func tile_type(pos):
 	return get_node(terrain).get_cellv(pos)
 	
+func lava_height():
+	return get_node(lava).HEIGHT
+	
 	
 func is_dip():
 	var next_floor = get_tile(Vector2(position.x + (sight * dir), position.y + 32))
@@ -158,7 +166,17 @@ func is_wall():
 	var next_floor = get_tile(Vector2(position.x + (sight * dir), position.y))
 	return (tile_type(next_floor) != -1)
 
-func fall_length():
+func fall_length(dir):
 	var pos = get_tile(position)
+	#print(str(pos))
+	var count = 0
 	pos.x += dir
+	pos.y += 1
+	#print(str(pos))
+	#print(str(tile_type(pos)))
+	while(tile_type(pos) == -1):
+		pos.y += 1
+		count += 1
+	return count
+		
 	
