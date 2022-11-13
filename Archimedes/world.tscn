@@ -467,4 +467,5 @@ text = "Menu"
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 18 )
 
+[connection signal="firesprite_hits_player" from="." to="player" method="_on_World_firesprite_hits_player"]
 [connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]
