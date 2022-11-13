@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-var speed = 400
+var speed = 550
 
 
 onready var spawn_time = 10
@@ -8,6 +8,7 @@ onready var player = get_parent().get_node("player").get_position()
 onready var attacking = true
 onready var exploding = false
 onready var coasting = false
+var started = false
 var collide_range = 20
 var coast_range = 500
 var velocity = Vector2()
@@ -43,5 +44,22 @@ func _physics_process(_delta):
 # warning-ignore:return_value_discarded
 #		emit_signal("firesprite_hits_player")
 		get_parent().firesprite_ex()
-		self.queue_free()
+#		$Particles2D.position = self.position
+		$Particles2D.emitting = true
+#		$Particles2D.emitting = false
+		$Sprite.visible = false
+		if started == false:
+			$Timer.start(0.4)
+			started = true
+		
 
+
+
+
+
+
+
+
+func _on_Timer_timeout():
+	print("received")
+	self.queue_free()

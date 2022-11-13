@@ -141,6 +141,7 @@ func switch_x_dir():
 		dir = 1
 	#velocity += -linear_velocity
 	#print("called : " + str(i))
+
 	
 func get_tile(pos):
 	var x = pos.x - (int(pos.x) % 32)

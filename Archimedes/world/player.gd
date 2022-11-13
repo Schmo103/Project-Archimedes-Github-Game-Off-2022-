@@ -1,12 +1,14 @@
 extends KinematicBody2D
-var speed = 100 #set movement speed
+var speed = 40 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
 var fric = 40
+
 var air_fric = 2
 var MAXSPEED = 200
+
 
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = true
@@ -20,6 +22,7 @@ onready var world = get_parent()
 func _ready():
 	
 	$Camera2D.current = true #make camera "the camera"
+
 	
 func flash(time):
 	material.set("shader_param/flash", 1.0)
