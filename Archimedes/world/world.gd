@@ -37,11 +37,11 @@ func firesprite_ex():
 
 func _on_fire_sprite_timer_timeout():
 	var instance = fire_sprite.instance()
-	add_child(instance)
 	rand_x = randi() % int(screen_x)
 #	rand_y = randi() % int(screen_y)
 	rand_y = $Lava.HEIGHT + 100
 	instance.position = Vector2(rand_x,rand_y)
+	add_child(instance)
 	timer.wait_time = randi() % spawn_time + 1
 
 

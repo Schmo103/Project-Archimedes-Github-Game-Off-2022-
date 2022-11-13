@@ -17,7 +17,7 @@ void fragment() {
 	vec4 screencolor = texture(SCREEN_TEXTURE, SCREEN_UV);
 
 	//COLOR = screencolor;
-	COLOR = mix(screencolor, color, pixcolor.r);
+	COLOR = mix(screencolor, color, pixcolor.r * 2.0);
 	
 }"
 
