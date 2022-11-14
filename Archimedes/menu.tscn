@@ -11,6 +11,7 @@ margin_bottom = 613.0
 color = Color( 0.258824, 0.0392157, 0.313726, 1 )
 
 [node name="Button" type="Button" parent="."]
+pause_mode = 2
 margin_left = 448.0
 margin_top = 320.0
 margin_right = 576.0

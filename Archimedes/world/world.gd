@@ -1,7 +1,7 @@
 extends Node2D
 
-var terrain = "/root/World/terrain"
-var lava = "/root/World/Lava"
+onready var terrain = get_terrain_path()
+onready var lava = get_lava_path()
 
 
 onready var timer = $fire_sprite_timer
@@ -32,8 +32,8 @@ func spawner():
 	else:
 		timer.stop()
 	
-func firesprite_ex():
-	emit_signal("firesprite_hits_player")
+func firesprite_ex(pos, ex_max, ex_min, ex_ran, crit):
+	emit_signal("firesprite_hits_player", pos, ex_max, ex_min, ex_ran, crit)
 
 func _on_fire_sprite_timer_timeout():
 	var instance = fire_sprite.instance()
@@ -62,5 +62,20 @@ func _process(_delta):
 
 
 func _on_menu_pressed():
-	get_tree().change_scene("res://menu.tscn")
+	if get_parent() == get_node("/root"):
+		get_tree().change_scene("res://menu.tscn")
+	else:
+		get_parent().to_menu()
+		
+func get_lava_path():
+	if get_parent() == get_node("/root"):
+		return "/root/World/Lava"
+	else:
+		return "/root/universe/World/Lava"
+		
+func get_terrain_path():
+	if get_parent() == get_node("/root"):
+		return "/root/World/terrain"
+	else:
+		return "/root/universe/World/terrain"
 	

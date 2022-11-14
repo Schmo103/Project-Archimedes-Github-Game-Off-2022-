@@ -2,6 +2,7 @@ extends RigidBody2D
 
 var lava
 var terrain
+var first = true
 
 var state = 0 #0 is patrol
 var velocity = Vector2(0, 0)
@@ -30,17 +31,16 @@ var up_dir = Vector2(0, -1)
 var vx = 0
 
 func _ready():
-	terrain = get_parent().terrain
-	lava = get_parent().lava
-#	print(str(fall_length(-1)))
-#	print(lava)
-#	print(str(get_node(lava).HEIGHT))
-#	print(str(get_tile(position)))
-#	print(str(is_dip()))
+	pass
 	
 
 	
 func _integrate_forces(s):
+	if first:
+		terrain = get_parent().terrain
+		lava = get_parent().lava
+		first = false
+
 	var step = s.get_step()
 	var lv = s.get_linear_velocity()
 	

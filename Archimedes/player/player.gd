@@ -11,7 +11,7 @@ var MAXSPEED = 200
 
 
 var sword_posi = 1 #-1 is left, 1 is right
-var sword_swinging = true
+var sword_swinging = false
 var reach = 50
 
 var game_over = false
@@ -126,6 +126,36 @@ func _physics_process(_delta):
 		#checks if player has fallen below lava
 		die()
 
+func explosion(pos, emax, emin, ran, crit):
+	var force_dir = pos.direction_to(position)
+	if force_dir == Vector2(0, 0):
+		force_dir = Vector2(1, 0)
+	var mag = (pos - position).length()
+	var force
+	if !(mag > ran):
+		flash(0.1)
+		if mag <= crit:
+			force = emax
+		else:
+			force = (ran - mag) / ran
+			if force < emin:
+				force = emin
+		velocity += (force_dir * force)
 
-func _on_World_firesprite_hits_player():
-	flash(0.1)
+
+func _on_World_firesprite_hits_player(pos, emax, emin, ran, crit):
+	#print("got explositon pos: " + str(pos))
+	explosion(pos, emax, emin, ran, crit)
+#	var force_dir = pos.direction_to(position)
+#	if force_dir == Vector2(0, 0):
+#		force_dir = Vector2(1, 0)
+#	var mag = (pos - position).length()
+#	var force
+#	if !(mag > ran):
+#		if mag <= crit:
+#			force = emax
+#		else:
+#			force = (ran - mag) / emax
+#			if force < emin:
+#				force = emin
+#		velocity += (force_dir * force)
