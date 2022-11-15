@@ -3,6 +3,7 @@
 [ext_resource path="res://menu/menu.gd" type="Script" id=1]
 
 [node name="menu" type="Node2D"]
+pause_mode = 2
 script = ExtResource( 1 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -11,10 +12,51 @@ margin_bottom = 613.0
 color = Color( 0.258824, 0.0392157, 0.313726, 1 )
 
 [node name="Button" type="Button" parent="."]
+pause_mode = 2
 margin_left = 448.0
 margin_top = 320.0
 margin_right = 576.0
 margin_bottom = 382.0
 text = "Play"
 
+[node name="Label" type="Label" parent="."]
+visible = false
+margin_left = 768.0
+margin_top = 296.0
+margin_right = 880.0
+margin_bottom = 344.0
+text = "Owens way"
+
+[node name="Label2" type="Label" parent="."]
+visible = false
+margin_left = 776.0
+margin_top = 392.0
+margin_right = 824.0
+margin_bottom = 406.0
+text = "Lava on"
+
+[node name="lava" type="Button" parent="."]
+margin_left = 672.0
+margin_top = 440.0
+margin_right = 808.0
+margin_bottom = 488.0
+text = "Turn Lava off"
+
+[node name="owens" type="Button" parent="."]
+margin_left = 672.0
+margin_top = 352.0
+margin_right = 805.0
+margin_bottom = 400.0
+text = "Turn owens way off"
+
+[node name="spawning" type="Button" parent="."]
+margin_left = 672.0
+margin_top = 528.0
+margin_right = 808.0
+margin_bottom = 572.0
+text = "Turn explosions off"
+
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="lava" to="." method="_on_lava_pressed"]
+[connection signal="pressed" from="owens" to="." method="_on_owens_pressed"]
+[connection signal="pressed" from="spawning" to="." method="_on_spawning_pressed"]
