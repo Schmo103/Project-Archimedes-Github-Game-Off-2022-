@@ -5,7 +5,7 @@ var down_offset = 340 #set initial offset
 #accounts for position of image being in center of image
 onready var HEIGHT = position.y - down_offset #set initial HEIGHT
 
-var speed = 0
+var speed = 1.0
 
 
 func _physics_process(_delta):
