@@ -1,13 +1,14 @@
 extends KinematicBody2D
-var speed = 40 #set movement speed
+var speed = 200 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
-var fric = 40
+var fric = 10
 
-var air_fric = 2
+var air_fric = 5
 var MAXSPEED = 200
+var min_air = 0
 
 
 var sword_posi = 1 #-1 is left, 1 is right
@@ -74,12 +75,12 @@ func _physics_process(_delta):
 	else:
 		if(velocity.x > 0):
 			velocity.x -= air_fric
-			if(velocity.x < 0): #clamp x
-				velocity.x = 0
+			if(velocity.x < min_air): #clamp x
+				velocity.x = min_air
 		if(velocity.x < 0):
 			velocity.x += air_fric 
-			if(velocity.x > 0): #clamp x
-				velocity.x = 0
+			if(velocity.x > -min_air): #clamp x
+				velocity.x = -min_air
 #		if(velocity.y > 0):
 #			velocity.y -= air_fric 
 #			if(velocity.y < 0): #clamp x

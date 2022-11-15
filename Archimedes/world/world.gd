@@ -3,6 +3,10 @@ extends Node2D
 onready var terrain = get_terrain_path()
 onready var lava = get_lava_path()
 
+var lava_on = true
+var owens_way = false
+var spawning = true
+var first = true
 
 onready var timer = $fire_sprite_timer
 onready var spawn_time = 7
@@ -36,13 +40,15 @@ func firesprite_ex(pos, ex_max, ex_min, ex_ran, crit):
 	emit_signal("firesprite_hits_player", pos, ex_max, ex_min, ex_ran, crit)
 
 func _on_fire_sprite_timer_timeout():
-	var instance = fire_sprite.instance()
-	rand_x = randi() % int(screen_x)
-#	rand_y = randi() % int(screen_y)
-	rand_y = $Lava.HEIGHT + 100
-	instance.position = Vector2(rand_x,rand_y)
-	add_child(instance)
-	timer.wait_time = randi() % spawn_time + 1
+	if spawning:
+		var instance = fire_sprite.instance()
+		rand_x = randi() % int(screen_x)
+#		rand_y = randi() % int(screen_y)
+		rand_y = $Lava.HEIGHT + 100
+		instance.position = Vector2(rand_x,rand_y)
+		instance.owens_way = owens_way
+		add_child(instance)
+		timer.wait_time = randi() % spawn_time + 1
 
 
 
@@ -50,8 +56,12 @@ func _ready():
 	get_tree().paused = false
 	butn.pause_mode = Node.PAUSE_MODE_PROCESS
 	spawner()
+	$Lava.lava_on = lava_on
 
 func _process(_delta):
+	if first:
+		$Lava.lava_on = lava_on
+		first = false
 	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
 	note.set_position(get_node("player/Camera2D").get_camera_screen_center() + n_offest)
 	butn.set_position(get_node("player/Camera2D").get_camera_screen_center() + m_offset)

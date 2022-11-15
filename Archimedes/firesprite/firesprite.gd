@@ -15,9 +15,9 @@ var velocity = Vector2()
 
 var owens_way = false
 var target = Vector2()
-var ex_force_max = 700
+var ex_force_max = 600
 var ex_force_min = 225
-var ex_force_range = 400
+var ex_force_range = 150
 var ex_crit_range = 20
 
 func _ready():

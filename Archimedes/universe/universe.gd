@@ -3,23 +3,28 @@ extends Node
 var world = preload("res://world.tscn")
 var menu = preload("res://menu.tscn")
 var current_scene = "menu"
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
-
-# Called when the node enters the scene tree for the first time.
+#variables passed between scenes
+var owens_way = true
+var lava_on = false
+var spawning = true
 
 func to_world():
-	get_tree().paused = false
+	get_tree().set_pause(false)
 	var w = world.instance()
+	w.lava_on = lava_on
+	w.owens_way = owens_way
+	w.spawning = spawning
 	add_child(w)
 	get_node(current_scene).queue_free()
 	current_scene = w.name
 	
 func to_menu():
-	get_tree().paused = false
+	get_tree().set_pause(false)
 	var m = menu.instance()
+	m.owens = owens_way
+	m.lava_on = lava_on
+	m.spawning = spawning
 	add_child(m)
 	get_node(current_scene).queue_free()
 	current_scene = m.name

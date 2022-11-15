@@ -13,6 +13,10 @@ func _ready():
 		speed = 0
 
 func _physics_process(_delta):
+	if !lava_on:
+		speed = 0
+	else:
+		speed = 1
 	position.x = get_parent().get_node("player/Camera2D").get_camera_screen_center().x
 	#move lava image so it is always at the correct x position relative 
 	#to camera
