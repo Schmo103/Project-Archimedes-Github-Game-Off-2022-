@@ -9,8 +9,6 @@ var lava_on = false
 
 var speed = 1
 
-
-
 func _ready():
 	if !lava_on:
 		speed = 0
