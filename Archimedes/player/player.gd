@@ -1,17 +1,18 @@
 extends KinematicBody2D
-var speed = 40 #set movement speed
+var speed = 200 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
 var grav = 20 #set gravity speed
 var jump_speed = 500 #set jump speed
-var fric = 40
+var fric = 10
 
-var air_fric = 2
+var air_fric = 5
 var MAXSPEED = 200
+var min_air = 0
 
 
 var sword_posi = 1 #-1 is left, 1 is right
-var sword_swinging = true
+var sword_swinging = false
 var reach = 50
 
 var game_over = false
@@ -74,12 +75,12 @@ func _physics_process(_delta):
 	else:
 		if(velocity.x > 0):
 			velocity.x -= air_fric
-			if(velocity.x < 0): #clamp x
-				velocity.x = 0
+			if(velocity.x < min_air): #clamp x
+				velocity.x = min_air
 		if(velocity.x < 0):
 			velocity.x += air_fric 
-			if(velocity.x > 0): #clamp x
-				velocity.x = 0
+			if(velocity.x > -min_air): #clamp x
+				velocity.x = -min_air
 #		if(velocity.y > 0):
 #			velocity.y -= air_fric 
 #			if(velocity.y < 0): #clamp x
@@ -126,6 +127,36 @@ func _physics_process(_delta):
 		#checks if player has fallen below lava
 		die()
 
+func explosion(pos, emax, emin, ran, crit):
+	var force_dir = pos.direction_to(position)
+	if force_dir == Vector2(0, 0):
+		force_dir = Vector2(1, 0)
+	var mag = (pos - position).length()
+	var force
+	if !(mag > ran):
+		flash(0.1)
+		if mag <= crit:
+			force = emax
+		else:
+			force = (ran - mag) / ran
+			if force < emin:
+				force = emin
+		velocity += (force_dir * force)
 
-func _on_World_firesprite_hits_player():
-	flash(0.1)
+
+func _on_World_firesprite_hits_player(pos, emax, emin, ran, crit):
+	#print("got explositon pos: " + str(pos))
+	explosion(pos, emax, emin, ran, crit)
+#	var force_dir = pos.direction_to(position)
+#	if force_dir == Vector2(0, 0):
+#		force_dir = Vector2(1, 0)
+#	var mag = (pos - position).length()
+#	var force
+#	if !(mag > ran):
+#		if mag <= crit:
+#			force = emax
+#		else:
+#			force = (ran - mag) / emax
+#			if force < emin:
+#				force = emin
+#		velocity += (force_dir * force)
