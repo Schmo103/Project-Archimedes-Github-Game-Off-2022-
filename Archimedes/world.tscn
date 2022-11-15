@@ -371,10 +371,9 @@ margin_bottom = 654.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="wavy shader" type="Sprite" parent="."]
-visible = false
 material = SubResource( 17 )
-position = Vector2( 535, -174 )
-scale = Vector2( 26.5938, 25.2188 )
+position = Vector2( 75, -211 )
+scale = Vector2( 42.1875, 26.0469 )
 texture = ExtResource( 3 )
 
 [node name="terrain" type="TileMap" parent="."]

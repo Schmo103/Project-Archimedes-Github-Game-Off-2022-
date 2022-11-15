@@ -1,14 +1,13 @@
 extends Sprite
 
 var MAX_HEIGHT = -764 #set max_height
-var down_offset = 340 #set initial offset
+var down_offset = 300 #set initial offset
 #accounts for position of image being in center of image
 onready var HEIGHT = position.y - down_offset #set initial HEIGHT
 var lava_on = false
 
 
 var speed = 1
-
 
 func _ready():
 	if !lava_on:
