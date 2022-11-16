@@ -55,7 +55,7 @@ void fragment() {
 
 	float final = fbm(coord + motion);
 
-	COLOR = vec4(color, final * 0.9);
+	COLOR = vec4(color, final * 0.5);
 }
 "
 
@@ -404,15 +404,6 @@ text = "You have died"
 align = 1
 valign = 1
 
-[node name="menu" type="Button" parent="."]
-visible = false
-margin_left = 397.0
-margin_top = 335.0
-margin_right = 513.0
-margin_bottom = 394.0
-rect_scale = Vector2( 0.5, 0.5 )
-text = "Menu"
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 18 )
 
@@ -421,6 +412,15 @@ position = Vector2( 509, 781 )
 texture = ExtResource( 1 )
 region_rect = Rect2( 0, 18, 1200, 582 )
 script = ExtResource( 2 )
+
+[node name="menu" type="Button" parent="."]
+visible = false
+margin_left = 397.0
+margin_top = 335.0
+margin_right = 513.0
+margin_bottom = 394.0
+rect_scale = Vector2( 0.5, 0.5 )
+text = "Menu"
 
 [connection signal="firesprite_hits_player" from="." to="player" method="_on_World_firesprite_hits_player"]
 [connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]

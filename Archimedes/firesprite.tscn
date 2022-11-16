@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://art/fireball.png" type="Texture" id=1]
 [ext_resource path="res://firesprite/firesprite.gd" type="Script" id=2]
 [ext_resource path="res://explode.tscn" type="PackedScene" id=3]
+[ext_resource path="res://sound/explosion.wav" type="AudioStream" id=4]
+[ext_resource path="res://sound/explosion_2.wav" type="AudioStream" id=5]
+[ext_resource path="res://sound/new_explosion.wav" type="AudioStream" id=6]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 12.0
@@ -23,5 +26,17 @@ disabled = true
 position = Vector2( -1.69407e-21, -6.77626e-21 )
 
 [node name="Timer" type="Timer" parent="."]
+
+[node name="explosion_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+volume_db = -20.0
+
+[node name="explosion_sound2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -20.0
+
+[node name="explosion_sound3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -20.0
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
