@@ -1,13 +1,13 @@
 extends KinematicBody2D
-var speed = 200 #set movement speed
+var speed = 40 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
-var grav = 20 #set gravity speed
-var jump_speed = 500 #set jump speed
-var fric = 10
+var grav = 22 #set gravity speed
+var jump_speed = 515 #set jump speed
+var fric = 22
 
-var air_fric = 5
-var MAXSPEED = 200
+var air_fric = 20
+var MAXSPEED = 250
 var min_air = 0
 
 

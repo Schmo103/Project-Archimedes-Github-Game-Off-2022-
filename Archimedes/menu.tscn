@@ -56,6 +56,14 @@ margin_right = 808.0
 margin_bottom = 572.0
 text = "Turn explosions off"
 
+[node name="firesprite respawn rate" type="Label" parent="."]
+margin_left = 418.0
+margin_top = 463.0
+margin_right = 556.0
+margin_bottom = 555.0
+text = "Fireball respawn time
+(random) ------->"
+
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="lava" to="." method="_on_lava_pressed"]
 [connection signal="pressed" from="owens" to="." method="_on_owens_pressed"]
