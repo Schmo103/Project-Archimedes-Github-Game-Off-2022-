@@ -22,7 +22,7 @@ var target = Vector2()
 var ex_force_max = 600
 var ex_force_min = 600
 var ex_force_range = 150
-var ex_crit_range = 20
+var ex_crit_range = 64
 
 func _ready():
 	 pass
