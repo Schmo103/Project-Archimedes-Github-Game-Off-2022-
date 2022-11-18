@@ -13,10 +13,14 @@ var collide_range = 20
 var coast_range = 500
 var velocity = Vector2()
 
+onready var sound = $'explosion_sound'
+onready var sound2 = $'explosion_sound2'
+onready var sound3 = $'explosion_sound3'
+
 var owens_way = false
 var target = Vector2()
 var ex_force_max = 600
-var ex_force_min = 225
+var ex_force_min = 600
 var ex_force_range = 150
 var ex_crit_range = 64
 
@@ -70,6 +74,13 @@ func _physics_process(delta):
 		$Particles2D.emitting = true
 #		$Particles2D.emitting = false
 		$Sprite.visible = false
+		var choice_sound = randi() % 2
+		if choice_sound == 0:
+			sound.play()
+		elif choice_sound == 1:
+			sound2.play()
+		elif choice_sound == 2:
+			sound3.play()
 		if started == false:
 			$Timer.start(0.4)
 			started = true
