@@ -9,7 +9,7 @@ var spawning = true
 var first = true
 
 onready var timer = $fire_sprite_timer
-onready var spawn_time = 7
+onready var spawn_time = 1
 onready var fire_sprite = load('res://firesprite.tscn')
 var spawnable = true
 var screen_x = OS.get_window_size().x
