@@ -65,6 +65,11 @@ func _process(_delta):
 	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
 	note.set_position(get_node("player/Camera2D").get_camera_screen_center() + n_offest)
 	butn.set_position(get_node("player/Camera2D").get_camera_screen_center() + m_offset)
+	if Input.is_action_pressed("ui_cancel"):
+		if get_parent() == get_node("/root"):
+			get_tree().change_scene("res://menu.tscn")
+		else:
+			get_parent().to_menu()
 	#fog.position = get_node("player/Camera2D").get_camera_screen_center()
 	#moves background and label to correct positions relative to camera
 	

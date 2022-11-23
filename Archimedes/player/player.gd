@@ -10,6 +10,7 @@ var air_fric = 20
 var MAXSPEED = 250
 var min_air = 0
 
+var player_pos = Vector2()
 
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = false
@@ -63,6 +64,7 @@ func swing_sword(m_pos):
 
 
 func _physics_process(_delta):
+	player_pos = position
 	if(is_on_floor()):
 		if(velocity.x > 0):
 			velocity.x -= fric
@@ -81,14 +83,6 @@ func _physics_process(_delta):
 			velocity.x += air_fric
 			if(velocity.x > -min_air): #clamp x
 				velocity.x = -min_air
-#		if(velocity.y > 0):
-#			velocity.y -= air_fric
-#			if(velocity.y < 0): #clamp x
-#				velocity.y = 0
-#		if(velocity.y < 0):
-#			velocity.y += air_fric
-#			if(velocity.y > 0): #clamp x
-#				velocity.y = 0
 	jump = false
 	if Input.is_action_pressed("ui_a"): #for moving left
 		if (velocity.x - speed >= -MAXSPEED):
@@ -105,8 +99,6 @@ func _physics_process(_delta):
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
 		jump = true
-	if Input.is_action_pressed("ui_cancel"):
-		get_tree().change_scene("res://menu.tscn")
 	if Input.is_action_pressed("ui_lclick"):
 		var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 		swing_sword(mpos)
@@ -140,7 +132,7 @@ func explosion(pos, emax, emin, ran, crit):
 		if mag <= float(crit):
 			force = emax
 		else:
-			force = (ran - mag) / ran
+			force = ((ran - mag) / ran) * emax
 			if force < emin:
 				force = emin
 		velocity += (force_dir * force)
