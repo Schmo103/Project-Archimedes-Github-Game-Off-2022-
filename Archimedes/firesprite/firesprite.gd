@@ -21,7 +21,7 @@ var owens_way = false
 var target = Vector2()
 var ex_force_max = 600
 var ex_force_min = 600
-var ex_force_range = 150
+var ex_force_range = 100
 var ex_crit_range = 64
 
 func _ready():
@@ -29,7 +29,7 @@ func _ready():
 
 
 func realtimereset():
-	player = get_parent().get_node("player").position
+	player = get_parent().get_node("player").player_pos
 	
 
 
@@ -72,6 +72,8 @@ func _physics_process(delta):
 		get_parent().firesprite_ex(position, ex_force_max, ex_force_min, ex_force_range, ex_crit_range)
 #		$Particles2D.position = self.position
 		$Particles2D.emitting = true
+		#$blast.position = position
+		#$blast.emit()
 #		$Particles2D.emitting = false
 		$Sprite.visible = false
 		var choice_sound = randi() % 2
@@ -95,5 +97,5 @@ func _physics_process(delta):
 
 
 func _on_Timer_timeout():
-	print("received")
+#	print("received")
 	self.queue_free()

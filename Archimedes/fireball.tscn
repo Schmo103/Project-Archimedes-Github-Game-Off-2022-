@@ -5,9 +5,6 @@
 [ext_resource path="res://art/light_mask2.png" type="Texture" id=3]
 [ext_resource path="res://art/sword.png" type="Texture" id=4]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 18.0
-
 [sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
 uniform vec4 color: hint_color;
@@ -32,8 +29,12 @@ shader_param/color = Color( 1, 0.772549, 0, 1 )
 shader_param/color2 = Color( 0.835294, 0.0470588, 0.0470588, 1 )
 shader_param/con = 2.97
 
+[sub_resource type="CircleShape2D" id=1]
+radius = 9.0
+
 [node name="Fireball" type="RigidBody2D"]
 mode = 2
+custom_integrator = true
 contacts_reported = 5
 script = ExtResource( 2 )
 
@@ -44,6 +45,11 @@ rotation = -3.14159
 scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 4 )
 
+[node name="Sprite2" type="Sprite" parent="."]
+material = SubResource( 3 )
+position = Vector2( 0, -1 )
+texture = ExtResource( 3 )
+
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -5 )
 scale = Vector2( 0.5, 0.5 )
@@ -51,9 +57,33 @@ texture = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-scale = Vector2( 0.5, 0.5 )
 shape = SubResource( 1 )
 
-[node name="Sprite2" type="Sprite" parent="."]
-material = SubResource( 3 )
-texture = ExtResource( 3 )
+[node name="RayCast_left" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( -300, 0 )
+
+[node name="RayCast_uleft" type="RayCast2D" parent="."]
+position = Vector2( 0, -32 )
+enabled = true
+cast_to = Vector2( -300, 0 )
+
+[node name="RayCast_right" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 300, 0 )
+
+[node name="RayCast_uright" type="RayCast2D" parent="."]
+position = Vector2( 0, -32 )
+enabled = true
+cast_to = Vector2( 300, 0 )
+
+[node name="raycast_ldown" type="RayCast2D" parent="."]
+visible = false
+position = Vector2( -12, 0 )
+enabled = true
+cast_to = Vector2( 0, 300 )
+
+[node name="raycast_rdown" type="RayCast2D" parent="."]
+position = Vector2( 12, 0 )
+enabled = true
+cast_to = Vector2( 0, 300 )
