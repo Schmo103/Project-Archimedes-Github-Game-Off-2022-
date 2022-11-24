@@ -20,7 +20,7 @@ onready var sound3 = $'explosion_sound3'
 var owens_way = false
 var target = Vector2()
 var ex_force_max = 600
-var ex_force_min = 600
+var ex_force_min = 225
 var ex_force_range = 150
 var ex_crit_range = 20
 

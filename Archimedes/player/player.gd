@@ -138,7 +138,7 @@ func explosion(pos, emax, emin, ran, crit):
 		if mag <= crit:
 			force = emax
 		else:
-			force = (ran - mag) / ran
+			force = ((ran - mag) / ran) * emax
 			if force < emin:
 				force = emin
 		velocity += (force_dir * force)
