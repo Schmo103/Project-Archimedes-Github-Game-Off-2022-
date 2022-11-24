@@ -2,6 +2,7 @@ extends Node2D
 
 onready var terrain = get_terrain_path()
 onready var lava = get_lava_path()
+onready var player = get_node("player")
 
 var lava_on = true
 var owens_way = false
@@ -28,6 +29,8 @@ var n_offest = Vector2(-174, -104)
 onready var butn = $menu
 var m_offset = Vector2(-103, 35)
 onready var fog = get_node("wavy shader")
+onready var hud = $filler_hud
+onready var hud_offset = Vector2(-235, -150)
 
 func spawner():
 	if spawnable == true:
@@ -65,6 +68,8 @@ func _process(_delta):
 	bkgd.set_position(get_node("player/Camera2D").get_camera_screen_center() - b_offset)
 	note.set_position(get_node("player/Camera2D").get_camera_screen_center() + n_offest)
 	butn.set_position(get_node("player/Camera2D").get_camera_screen_center() + m_offset)
+	hud.set_position(get_node("player/Camera2D").get_camera_screen_center() + hud_offset)
+	hud.text = "Health: " + str($player.health)
 	if Input.is_action_pressed("ui_cancel"):
 		if get_parent() == get_node("/root"):
 			get_tree().change_scene("res://menu.tscn")
@@ -74,7 +79,10 @@ func _process(_delta):
 	#moves background and label to correct positions relative to camera
 	
 	
-
+func hit_enemy(name, dire, kb):
+	for i in range(get_child_count()):
+		if get_child(i) == name:
+			get_child(i).take_hit(dire, kb)
 
 func _on_menu_pressed():
 	if get_parent() == get_node("/root"):
