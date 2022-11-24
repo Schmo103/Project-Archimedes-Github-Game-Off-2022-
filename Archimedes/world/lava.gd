@@ -12,6 +12,9 @@ var speed = 1
 func _ready():
 	if !lava_on:
 		speed = 0
+		
+func get_height():
+	return HEIGHT
 
 func _physics_process(_delta):
 	if !lava_on:
