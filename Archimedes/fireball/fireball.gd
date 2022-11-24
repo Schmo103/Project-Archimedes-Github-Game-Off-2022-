@@ -2,15 +2,30 @@ extends RigidBody2D
 
 var lava
 var terrain
+var player
 var first = true
 export var en = false
 
-var state = 0 #0 is patrol
+var state = 0 #0 is patrol 1 is hunting
 var velocity = Vector2(0, 0)
+
 var jump_speed = 320
-var speed = 260
+
+var walk_speed = 200
+var max_walk_speed = 200
+
+var jog_speed = 250
+var max_jog_speed = 300
+
+var run_speed = 300
+var max_run_speed = 350
+
 var air_speed = 60
-var max_speed = 200
+
+var speed = walk_speed
+var max_speed = max_walk_speed
+
+
 var gravity = 13
 var fric = 60
 var air_fric = 70
@@ -43,6 +58,11 @@ var s_count = 0
 var just_uf = false
 var uf_c = 1
 
+var health = 4
+
+var hunting_enabled = true
+var seeing_player = false
+
 var this_pos = Vector2()
 onready var ray_left = $RayCast_left
 onready var ray_right = $RayCast_right
@@ -51,33 +71,58 @@ onready var ray_rdown = $raycast_rdown
 onready var ray_lup = $RayCast_uleft
 onready var ray_rup = $RayCast_uright
 
+var knockback = 200
+var knocked = false
+var knock_dir = Vector2(1, 0)
+var sword_swinging = false
+var reach = 15
+var struck = false
+var strike_range = 70
+onready var sword_a = get_node("sword/Area2D")
+
 var vx = 0
 
 func _ready():
-#	ray_left.cast_to.x = vision
-#	ray_right.cast_to.x = vision
-#	ray_ldown.cast_to.y = -vision
-#	ray_rdown.cast_to.y = vision
-#	ray_lup.cast_to.x = -vision
-#	ray_rup.cast_to.x = vision
-	
 	this_pos = position
-	prints("ray fall: ", str(ray_fall(1)))
-	prints("wall dif right: ", get_wall_dif(1))
-	prints("wall dif left: ", get_wall_dif(-1))
 	
 func _physics_process(_delta):
+	if first:
+		player = get_parent().player
 	old_pos = this_pos
 	this_pos = position
 	if old_pos == this_pos:
 		s_count += 1
-		print("stuck: " + str(s_count))
 	else:
 		just_uf = false
 		uf_c = 1
 		s_count = 0
+	var space_state = get_world_2d().direct_space_state
+	var result = space_state.intersect_ray(position, player.position)
+	if result:
+		if instance_from_id(result["collider_id"]) == player:
+			seeing_player = true
+		else:
+			seeing_player = false
 	
-
+func take_hit(dire, kb):
+	health -= 1
+	knocked = true
+	knock_dir = dire
+	knockback = kb
+	prints(name, ": hit health: ", health)
+	if health <= 0:
+		queue_free()
+		
+func swing_sword():
+	var dire = position.direction_to(player.position)
+	sword_swinging = true
+	$sword.visible = true
+	$sword.rotation = dire.angle() + PI / 2
+	$sword.position = dire * reach
+	yield(get_tree().create_timer(.2), "timeout")
+	$sword.visible = false
+	sword_swinging = false
+	struck = false
 	
 func _integrate_forces(s):
 	var out = Input.is_action_pressed("ui_s") and en
@@ -87,15 +132,14 @@ func _integrate_forces(s):
 	if first:
 		terrain = get_parent().terrain
 		lava = get_parent().lava
+		player = get_parent().player
 		first = false
-		prints(str(name), ": fall_lenght ", str(fall_length(-1)))
-		prints("get tile :", str(get_tile(position)))
 
 	var step = s.get_step()
 	var lv = s.get_linear_velocity()
 	if Vector2(abs(lv.x), abs(lv.y)) == Vector2():
 		freeze += 1
-		print("Alert: frozen " + str(freeze) + " vel: " + str(lv))
+#		print("Alert: frozen " + str(freeze) + " vel: " + str(lv))
 	else: 
 		freeze = 0
 	if out:
@@ -110,6 +154,10 @@ func _integrate_forces(s):
 	on_right = false
 	is_dip = false
 	
+	if seeing_player and hunting_enabled:
+		state = 1
+	else:
+		state = 0
 	#find if onfloor
 	var fx
 	for x in range(s.get_contact_count()):
@@ -145,11 +193,13 @@ func _integrate_forces(s):
 		prints("lv after friction: ", str(lv))
 		prints("dir: ", str(dir))
 		prints("state: ", str(state))
+		
+	if knocked:
+		lv += knockback * knock_dir
 	
 	#determine behavior
 	if state == 0:
 		if freeze >= 2:
-			print("thaw")
 			switch_x_dir()
 			freeze = 0
 		if dir == 1:
@@ -163,28 +213,45 @@ func _integrate_forces(s):
 		if ray_fall(dir) - 9 > 0:
 			is_dip = true
 		if get_downr_dif(dir) > 32:
-			#prints("fall:", str(fall_length(dir)))
 			if out:
 				prints("is_dip: true")
 			
-			if ray_fall(dir) - 9 > 33:
-				prints("fl", ray_fall(dir) - 9)
-				print("switching")
-				stop = true
-				switch_x_dir()
-			else:
-				if fall_length(dir) > 96 and fall_length(dir) != -1:
-					prints("fl", fall_length(dir))
-					print("switching")
-					stop = true
-					switch_x_dir()
-		if get_wall_dist(dir, 0) != null:
-			if abs(get_wall_dist(dir, 0)) <= wall_sight and get_wall_dif(dir) > 5:
+			stop = true
+			switch_x_dir()
+		if get_wall_dist(dir, 0) != 301:
+			if get_wall_dist(dir, 0) <= wall_sight and get_wall_dif(dir) > 32:
 				jump = true
 				if out:
 					prints("is_wall: true")
-#			if lv.x <= 10 and on_floor:
-#				switch_x_dir()
+		if en:
+			print("not hunting")
+	elif state == 1:
+		if freeze >= 2:
+			switch_x_dir()
+			freeze = 0
+		if dir == 1:
+			right = true
+			if out:
+				prints("right: true ")
+		elif dir == -1:
+			left = true
+			if out:
+				prints("left: true ")
+		if ray_fall(dir) - 9 > 0:
+			is_dip = true
+		if get_downr_dif(dir) > 32:
+			if out:
+				prints("is_dip: true")
+			
+			stop = true
+			switch_x_dir()
+		if get_wall_dist(dir, 0) != 301:
+			if get_wall_dist(dir, 0) <= wall_sight and get_wall_dif(dir) > 32:
+				jump = true
+				if out:
+					prints("is_wall: true")
+		if en:
+			print("hunting")
 		
 	
 	
@@ -221,14 +288,14 @@ func _integrate_forces(s):
 			jumping = true
 	else:
 		#horizontal motion
-		if right and not left:
+		if right:
 			lv.x += speed * step
 			vx = abs(lv.x)
 			if vx > max_speed:
 				vx = max_speed
 			lv.x = sign(lv.x) * vx
 			
-		if left and not right:
+		if left:
 			lv.x += -speed * step
 			vx = abs(lv.x)
 			if vx > max_speed:
@@ -260,16 +327,22 @@ func _integrate_forces(s):
 	
 	s.set_linear_velocity(lv)
 	i += 1
+	knocked = false
 	
+	if (this_pos - player.position).length() <= strike_range and !sword_swinging:
+		swing_sword()
+	if sword_swinging:
+		for a in sword_a.get_overlapping_bodies():
+			if a.is_in_group("player") and !struck:
+				struck = true
+				get_parent().hit_enemy(a, position.direction_to(a.position), knockback)
+
 func switch_x_dir():
 	if dir == 1:
 		dir = -1
 	else:
 		dir = 1
-	#velocity += -linear_velocity
-	#print("called : " + str(i))
 
-	
 func get_tile(pos):
 	var x = pos.x - (int(pos.x) % 32)
 #	print(str(pos.x))
@@ -287,25 +360,18 @@ func tile_type(pos):
 func lava_height():
 	return get_node(lava).get_height()
 	
-	
-func is_dip():
-	var next_floor = get_tile(Vector2(this_pos.x + (sight * dir), this_pos.y + 32))
-	return (tile_type(next_floor) == -1 and !is_wall())
-	
-func is_wall():
-	var next_floor = get_tile(Vector2(this_pos.x + (wall_sight * dir), this_pos.y))
-	return (tile_type(next_floor) != -1)
-	
 func get_wall_dist(dire, u):
 	if u == 0:
 		if dire == 1:
-			if $RayCast_right.is_colliding():
-				return ($RayCast_right.get_collision_point() - this_pos).length()
+			#ray_right.force_raycast_update()
+			if ray_right.is_colliding():
+				return (ray_right.get_collision_point() - this_pos).length()
 			else: 
 				return 301
 		else:
-			if $RayCast_left.is_colliding():
-				return ($RayCast_left.get_collision_point() - this_pos).length()
+			#ray_left.force_raycast_update()
+			if ray_left.is_colliding():
+				return (ray_left.get_collision_point() - this_pos).length()
 			else: 
 				return 301
 	else:
@@ -382,5 +448,13 @@ func fall_length(dire):
 			return -1
 		i += 1
 	return count
+	
+func is_dip():
+	var next_floor = get_tile(Vector2(this_pos.x + (sight * dir), this_pos.y + 32))
+	return (tile_type(next_floor) == -1 and !is_wall())
+	
+func is_wall():
+	var next_floor = get_tile(Vector2(this_pos.x + (wall_sight * dir), this_pos.y))
+	return (tile_type(next_floor) != -1)
 		
 	

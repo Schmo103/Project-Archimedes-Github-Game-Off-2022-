@@ -1,4 +1,5 @@
 extends KinematicBody2D
+
 var speed = 40 #set movement speed
 var velocity = Vector2(0, 0) #set initial velocity
 var jump = false #variable to record if jump button was pressed
@@ -15,16 +16,25 @@ var player_pos = Vector2()
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = false
 var reach = 50
+var struck = false
+var swing_dir = Vector2(0, -1)
+var knockback = 300
 
 var game_over = false
+var health = 30
 
 onready var world = get_parent()
+onready var sword_a = get_node("sword/Area2D")
 
 
 func _ready():
-
 	$Camera2D.current = true #make camera "the camera"
 
+
+func take_hit(dir, kb):
+	velocity += dir * kb
+	health -= 2
+	flash(0.1)
 
 func flash(time):
 	material.set("shader_param/flash", 1.0)
@@ -47,6 +57,7 @@ func set_sword_left(): #puts sword in left position
 func die(): #function cleanup after death and display alert
 	print("You have died")
 	get_tree().paused = true
+	world.get_node("filler_hud").text = "Health: 0"
 	world.get_node("death_note").visible = true
 	world.get_node("menu").visible = true
 
@@ -57,6 +68,7 @@ func swing_sword(m_pos):
 	$sword.position = dir * reach
 	yield(get_tree().create_timer(.2), "timeout")
 	sword_swinging = false
+	struck = false
 	if sword_posi == 1:
 		set_sword_right()
 	else:
@@ -99,7 +111,7 @@ func _physics_process(_delta):
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
 		jump = true
-	if Input.is_action_pressed("ui_lclick"):
+	if Input.is_action_just_pressed("ui_lclick"):
 		var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 		swing_sword(mpos)
 	if is_on_floor():
@@ -115,9 +127,15 @@ func _physics_process(_delta):
 	move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false) #moves player
 
 	#check if still alive
-	if position.y >= get_parent().get_node("Lava").HEIGHT:
+	if position.y >= get_parent().get_node("Lava").HEIGHT or health <= 0:
 		#checks if player has fallen below lava
 		die()
+	if sword_swinging:
+		for a in sword_a.get_overlapping_bodies():
+			if a.is_in_group("enemies") and !struck:
+				struck = true
+				get_parent().hit_enemy(a, position.direction_to(a.this_pos), knockback)
+		
 
 func explosion(pos, emax, emin, ran, crit):
 	var force_dir = pos.direction_to(position)
@@ -127,8 +145,6 @@ func explosion(pos, emax, emin, ran, crit):
 	var force
 	if !(mag > ran):
 		flash(0.1)
-#		prints("mag:", str(mag))
-#		prints("crit:", str(ran))
 		if mag <= float(crit):
 			force = emax
 		else:
@@ -136,7 +152,8 @@ func explosion(pos, emax, emin, ran, crit):
 			if force < emin:
 				force = emin
 		velocity += (force_dir * force)
-#		prints("force:", force)
+		health -= 1
+
 
 
 func _on_World_firesprite_hits_player(pos, emax, emin, ran, crit):
