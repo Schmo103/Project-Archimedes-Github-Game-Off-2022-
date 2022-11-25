@@ -360,6 +360,7 @@ func _integrate_forces(s):
 	knocked = false
 	
 	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
+		yield(get_tree().create_timer(1),"timeout")
 		swing_sword()
 	if sword_swinging:
 		for a in sword_a.get_overlapping_bodies():

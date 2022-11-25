@@ -51,6 +51,7 @@ func take_hit(dir, kb):
 		if check_block(dir, shield_dir):
 			health -= 0
 			velocity += dir * kb / 2
+			$AudioStreamPlayer2.play()
 			#flash(0.1)
 		else:
 			health -= 2
