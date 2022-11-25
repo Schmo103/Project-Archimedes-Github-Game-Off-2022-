@@ -42,7 +42,7 @@ func take_hit(dir, kb):
 		health -= 2
 		velocity += dir * kb
 		flash(0.1)
-    $AudioStreamPlayer.play()
+		$AudioStreamPlayer.play()
 	else:
 		if check_block(dir, shield_dir):
 			health -= 0
@@ -52,7 +52,7 @@ func take_hit(dir, kb):
 			health -= 2
 			velocity += dir * kb
 			flash(0.1)
-      $AudioStreamPlayer.play()
+			$AudioStreamPlayer.play()
 			
 func check_block(swordd, shieldd):
 	var nswordd = swordd.rotated(PI)

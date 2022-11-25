@@ -8,7 +8,7 @@ var test_chunk2 = [12,2,100,8,10]
 export var placer = Vector2(11,9)
 var direction = 0
 var ready = true
-onready var time = $Timer
+#onready var time = $Timer
 var choice
 # 0 = start tile, 1 = 
 var tile_pos_list = [-2,-1]
