@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://art/lava_pixel.png" type="Texture" id=1]
 [ext_resource path="res://world/lava.gd" type="Script" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://terrain.gd" type="Script" id=7]
 [ext_resource path="res://fireball.tscn" type="PackedScene" id=8]
 [ext_resource path="res://sound/random.wav" type="AudioStream" id=9]
+[ext_resource path="res://screen_joystick.tscn" type="PackedScene" id=10]
 
 [sub_resource type="Shader" id=16]
 code = "shader_type canvas_item;
@@ -463,6 +464,8 @@ valign = 1
 [node name="hiss_noise" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 9 )
 volume_db = -24.241
+
+[node name="screen_joystick" parent="." instance=ExtResource( 10 )]
 
 [connection signal="firesprite_hits_player" from="." to="player" method="_on_World_firesprite_hits_player"]
 [connection signal="timeout" from="fire_sprite_timer" to="." method="_on_fire_sprite_timer_timeout"]

@@ -21,7 +21,8 @@ onready var rand_y
 
 signal firesprite_hits_player 
 
-
+var js_pos = Vector2(900, 500)
+var js_range = 78
 onready var bkgd = $background
 onready var b_offset = Vector2(557, 405)
 onready var note = $death_note
