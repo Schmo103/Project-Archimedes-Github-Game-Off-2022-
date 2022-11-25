@@ -16,9 +16,9 @@ func _ready():
 	set_shield_pos(-get_parent().sword_posi)
 	
 	
-func swing_shield(m_pos):
+func swing_shield(dir):
 	raise_shield()
-	var dir = get_parent().position.direction_to(m_pos)
+	#var dir = get_parent().position.direction_to(m_pos)
 	get_parent().shield_dir = dir
 	up_shield.rotation = dir.angle() 
 	up_shield.position = dir * reach

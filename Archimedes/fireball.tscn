@@ -38,7 +38,7 @@ void fragment() {
 	//COLOR = screencolor;
 	COLOR = mix(screencolor, new_color, pixcolor.r * 2.0);
 	//COLOR = pixcolor;
-	
+
 }"
 
 [sub_resource type="ShaderMaterial" id=3]

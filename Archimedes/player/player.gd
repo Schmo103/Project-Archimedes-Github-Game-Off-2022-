@@ -16,6 +16,7 @@ var player_pos = Vector2()
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = false
 var reach = 50
+var pointer_range = 50
 var struck = false
 var swing_dir = Vector2(0, -1)
 var knockback = 300
@@ -30,6 +31,9 @@ onready var world = get_parent()
 onready var sword_a = get_node("sword/Area2D")
 onready var shield = $lowered_shield
 
+var js_pos = Vector2(900, 480)
+var js_range = 104
+var in_bubble = false
 
 func _ready():
 	$Camera2D.current = true #make camera "the camera"
@@ -84,8 +88,9 @@ func die(): #function cleanup after death and display alert
 	world.get_node("death_note").visible = true
 	world.get_node("menu").visible = true
 
-func swing_sword(m_pos):
-	var dir = position.direction_to(m_pos)
+func swing_sword(dir):
+	#var dir = position.direction_to(m_pos)
+	$pointer.visible = false
 	sword_swinging = true
 	$sword.rotation = dir.angle() + PI / 2
 	$sword.position = dir * reach
@@ -99,6 +104,21 @@ func swing_sword(m_pos):
 
 
 func _physics_process(_delta):
+	var d
+	var m_dir
+	var mouse_pos = get_viewport().get_mouse_position()
+	if mouse_pos.distance_to(js_pos) <= js_range:
+		in_bubble = true
+	else:
+		in_bubble = false
+	var ab_m_pos = mouse_pos + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
+	if !in_bubble:
+		 m_dir = position.direction_to(ab_m_pos)
+	else:
+		m_dir = js_pos.direction_to(mouse_pos)
+	$pointer.rotation = m_dir.angle() + PI / 2
+	$pointer.position = m_dir * pointer_range
+		
 	player_pos = position
 	if(is_on_floor()):
 		if(velocity.x > 0):
@@ -137,15 +157,18 @@ func _physics_process(_delta):
 		#for jumping
 		jump = true
 	if Input.is_action_pressed("ui_rclick"):
-		var rmpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
+		#var rmpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 		shielded = true
-		shield.swing_shield(rmpos)
+		$pointer.visible = false
+		d = position.direction_to(ab_m_pos)
+		shield.swing_shield(m_dir)
 	if Input.is_action_just_released("ui_rclick"):
 		shielded = false
 		shield.lower_shield()
 	if Input.is_action_just_pressed("ui_lclick") and !shielded:
-		var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
-		swing_sword(mpos)
+		#var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
+		d = position.direction_to(ab_m_pos)
+		swing_sword(m_dir)
 	if is_on_floor():
 		if velocity.y > 1:
 			velocity.y = 0 #if on floor, gravity doesnt continue increasing
@@ -167,6 +190,8 @@ func _physics_process(_delta):
 			if a.is_in_group("enemies") and !struck:
 				struck = true
 				get_parent().hit_enemy(a, position.direction_to(a.this_pos), knockback)
+	if !sword_swinging and !shielded:
+		$pointer.visible = true
 		
 
 func explosion(pos, emax, emin, ran, crit):
