@@ -19,22 +19,43 @@ var reach = 50
 var struck = false
 var swing_dir = Vector2(0, -1)
 var knockback = 300
+var shielded = false
+var shield_dir = Vector2()
+var max_shield_angle = 0.4 #the closer this is to zero, the narrower the range the shield blocks
 
 var game_over = false
 var health = 30
 
 onready var world = get_parent()
 onready var sword_a = get_node("sword/Area2D")
+onready var shield = $lowered_shield
 
 
 func _ready():
 	$Camera2D.current = true #make camera "the camera"
+	shield.lower_shield()
+	shield.set_shield_pos(sword_posi)
 
 
 func take_hit(dir, kb):
-	velocity += dir * kb
-	health -= 2
-	flash(0.1)
+	if !shielded:
+		health -= 2
+		velocity += dir * kb
+		flash(0.1)
+	else:
+		if check_block(dir, shield_dir):
+			health -= 0
+			velocity += dir * kb / 2
+			#flash(0.1)
+		else:
+			health -= 2
+			velocity += dir * kb
+			flash(0.1)
+			
+func check_block(swordd, shieldd):
+	var nswordd = swordd.rotated(PI)
+	return (nswordd.dot(shieldd) >= max_shield_angle)
+	
 
 func flash(time):
 	material.set("shader_param/flash", 1.0)
@@ -102,16 +123,25 @@ func _physics_process(_delta):
 		elif (velocity.x > -MAXSPEED):
 			velocity.x = -MAXSPEED
 		set_sword_left()
+		shield.set_shield_left()
 	if Input.is_action_pressed("ui_d"): #for moving right
 		if (velocity.x + speed <= MAXSPEED):
 			velocity.x += speed
 		elif (velocity.x < MAXSPEED):
 			velocity.x = MAXSPEED
 		set_sword_right()
+		shield.set_shield_right()
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
 		jump = true
-	if Input.is_action_just_pressed("ui_lclick"):
+	if Input.is_action_pressed("ui_rclick"):
+		var rmpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
+		shielded = true
+		shield.swing_shield(rmpos)
+	if Input.is_action_just_released("ui_rclick"):
+		shielded = false
+		shield.lower_shield()
+	if Input.is_action_just_pressed("ui_lclick") and !shielded:
 		var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 		swing_sword(mpos)
 	if is_on_floor():

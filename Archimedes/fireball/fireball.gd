@@ -25,6 +25,7 @@ var air_speed = 60
 var speed = walk_speed
 var max_speed = max_walk_speed
 
+var yields = []
 
 var gravity = 13
 var fric = 60
@@ -99,7 +100,7 @@ func _physics_process(_delta):
 	var space_state = get_world_2d().direct_space_state
 	var result = space_state.intersect_ray(position, player.position)
 	if result:
-		if instance_from_id(result["collider_id"]) == player:
+		if instance_from_id(result["collider_id"]).is_in_group("player"):
 			seeing_player = true
 		else:
 			seeing_player = false
@@ -119,10 +120,13 @@ func swing_sword():
 	$sword.visible = true
 	$sword.rotation = dire.angle() + PI / 2
 	$sword.position = dire * reach
-	yield(get_tree().create_timer(.2), "timeout")
+	$sword_swing_timer.start()
+	
+func _on_sword_swing_timer_timeout():
 	$sword.visible = false
 	sword_swinging = false
 	struck = false
+
 	
 func _integrate_forces(s):
 	var out = Input.is_action_pressed("ui_s") and en
@@ -157,6 +161,7 @@ func _integrate_forces(s):
 	if seeing_player and hunting_enabled:
 		state = 1
 	else:
+		
 		state = 0
 	#find if onfloor
 	var fx
@@ -223,12 +228,11 @@ func _integrate_forces(s):
 				jump = true
 				if out:
 					prints("is_wall: true")
-		if en:
-			print("not hunting")
 	elif state == 1:
-		if freeze >= 2:
-			switch_x_dir()
-			freeze = 0
+#		if freeze >= 2:
+#			switch_x_dir()
+#			freeze = 0
+		dir = sign(player.position.x - this_pos.x)
 		if dir == 1:
 			right = true
 			if out:
@@ -244,14 +248,13 @@ func _integrate_forces(s):
 				prints("is_dip: true")
 			
 			stop = true
-			switch_x_dir()
+#			switch_x_dir()
 		if get_wall_dist(dir, 0) != 301:
 			if get_wall_dist(dir, 0) <= wall_sight and get_wall_dif(dir) > 32:
 				jump = true
 				if out:
 					prints("is_wall: true")
-		if en:
-			print("hunting")
+		
 		
 	
 	
@@ -265,7 +268,7 @@ func _integrate_forces(s):
 	
 	if on_floor:
 		#horizontal motion
-		if right:
+		if right and !stop:
 			#print("right")
 			lv.x += speed * step
 			vx = abs(lv.x)
@@ -273,7 +276,7 @@ func _integrate_forces(s):
 				vx = max_speed
 			lv.x = sign(lv.x) * vx
 			
-		if left:
+		if left and (state == 0 or !stop):
 			#print("left")
 			lv.x += -speed * step
 			vx = abs(lv.x)
@@ -288,14 +291,14 @@ func _integrate_forces(s):
 			jumping = true
 	else:
 		#horizontal motion
-		if right:
+		if right and (state == 0 or !stop):
 			lv.x += speed * step
 			vx = abs(lv.x)
 			if vx > max_speed:
 				vx = max_speed
 			lv.x = sign(lv.x) * vx
 			
-		if left:
+		if left and (state == 0 or !stop):
 			lv.x += -speed * step
 			vx = abs(lv.x)
 			if vx > max_speed:
@@ -319,11 +322,12 @@ func _integrate_forces(s):
 		if out:
 			prints("speed after apply wall_check: ", str(lv))
 	
-	if s_count >= 5:
-			print("EMERGENCY UNFREEZE!!")
-			uf_c += 1
-			just_uf = true
-			lv.y = 5 * uf_c
+	if s_count >= 5 and state == 0:
+			prints(name, ": EMERGENCY UNFREEZE!!")
+#			uf_c += 1
+#			just_uf = true
+#			lv.y = 5 * uf_c
+			switch_x_dir()
 	
 	s.set_linear_velocity(lv)
 	i += 1
@@ -458,3 +462,5 @@ func is_wall():
 	return (tile_type(next_floor) != -1)
 		
 	
+
+
