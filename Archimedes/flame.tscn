@@ -28,7 +28,7 @@ load_path = "res://.import/smudge2.png-d44eabedfb5bb41256eb91964412b4b7.stex"
 
 [node name="Particles2D2" type="Particles2D"]
 material = SubResource( 4 )
-position = Vector2( 239, 105 )
+position = Vector2( 124, 85 )
 scale = Vector2( 0.1, 0.1 )
 amount = 33
 explosiveness = 0.03

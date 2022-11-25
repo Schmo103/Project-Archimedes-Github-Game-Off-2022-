@@ -16,22 +16,23 @@ var first_tile_placement = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	choose_direction()
-	for i in chunk_num:
-#		randomize()
-#		choice = randi() % 2 +1
-#		if choice == 1: 
-#			read_chunk(test_chunk2)
-#		elif choice == 2:
-#			read_chunk(test_chunk)
-		read_chunk(test_chunk)
-		choose_direction()
-		move_placer(max_x_dist,max_y_dist, i)
-	var chunk_num_testing = [-2,-1]
-	for i in chunk_num:
-		chunk_num_testing.append(i + 1)
-	print(chunk_num_testing)
-	print(tile_pos_list)
+	pass
+#	choose_direction()
+#	for i in chunk_num:
+##		randomize()
+##		choice = randi() % 2 +1
+##		if choice == 1: 
+##			read_chunk(test_chunk2)
+##		elif choice == 2:
+##			read_chunk(test_chunk)
+#		read_chunk(test_chunk)
+#		choose_direction()
+#		move_placer(max_x_dist,max_y_dist, i)
+#	var chunk_num_testing = [-2,-1]
+#	for i in chunk_num:
+#		chunk_num_testing.append(i + 1)
+#	print(chunk_num_testing)
+#	print(tile_pos_list)
 
 func choose_direction():
 	direction = randi() % 2 +1

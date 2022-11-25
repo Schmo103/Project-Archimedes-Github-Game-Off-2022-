@@ -58,7 +58,8 @@ var s_count = 0
 var just_uf = false
 var uf_c = 1
 
-var health = 4
+var health = 3
+var dying = false
 
 var hunting_enabled = true
 var seeing_player = false
@@ -105,24 +106,37 @@ func _physics_process(_delta):
 			seeing_player = false
 	
 func take_hit(dire, kb):
+#	if dying == false:
 	health -= 1
 	knocked = true
 	knock_dir = dire
 	knockback = kb
+	flash(0.1)
 	prints(name, ": hit health: ", health)
 	if health <= 0:
+		dying = true
+		$AudioStreamPlayer.play()
+		$Particles2D.visible = true
+		yield(get_tree().create_timer(1),"timeout")
 		queue_free()
-		
+
+func flash(time):
+	material.set("shader_param/flash", 1.0)
+	yield(get_tree().create_timer(time), "timeout")
+	material.set("shader_param/flash", 0.0)
+
 func swing_sword():
-	var dire = position.direction_to(player.position)
-	sword_swinging = true
-	$sword.visible = true
-	$sword.rotation = dire.angle() + PI / 2
-	$sword.position = dire * reach
-	yield(get_tree().create_timer(.2), "timeout")
-	$sword.visible = false
-	sword_swinging = false
-	struck = false
+	if dying == false:
+		yield(get_tree().create_timer(1),"timeout")
+		var dire = position.direction_to(player.position)
+		sword_swinging = true
+		$sword.visible = true
+		$sword.rotation = dire.angle() + PI / 2
+		$sword.position = dire * reach
+		yield(get_tree().create_timer(.4), "timeout")
+		$sword.visible = false
+		sword_swinging = false
+		struck = false
 	
 func _integrate_forces(s):
 	var out = Input.is_action_pressed("ui_s") and en
