@@ -10,7 +10,7 @@ var spawning = true
 var first = true
 
 onready var timer = $fire_sprite_timer
-onready var spawn_time = 1
+onready var spawn_time = 10
 onready var fire_sprite = load('res://firesprite.tscn')
 var spawnable = true
 var screen_x = OS.get_window_size().x
@@ -32,6 +32,8 @@ onready var fog = get_node("wavy shader")
 onready var hud = $filler_hud
 onready var hud_offset = Vector2(-235, -150)
 
+	
+
 func spawner():
 	if spawnable == true:
 		timer.start(randi() % spawn_time + 1)
@@ -45,13 +47,14 @@ func firesprite_ex(pos, ex_max, ex_min, ex_ran, crit):
 func _on_fire_sprite_timer_timeout():
 	if spawning:
 		var instance = fire_sprite.instance()
-		rand_x = randi() % int(screen_x)
+		rand_x = randi() % (int(screen_x) + int($player/Camera2D.get_camera_screen_center().x - int(screen_x / 2)))
 #		rand_y = randi() % int(screen_y)
 		rand_y = $Lava.HEIGHT + 100
 		instance.position = Vector2(rand_x,rand_y)
 		instance.owens_way = owens_way
 		add_child(instance)
 		timer.wait_time = randi() % spawn_time + 1
+		$'hiss_noise'.play()
 
 
 
@@ -77,6 +80,8 @@ func _process(_delta):
 			get_parent().to_menu()
 	#fog.position = get_node("player/Camera2D").get_camera_screen_center()
 	#moves background and label to correct positions relative to camera
+	screen_x = OS.get_window_size().x
+	screen_y = OS.get_window_size().y
 	
 	
 func hit_enemy(name, dire, kb):

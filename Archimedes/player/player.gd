@@ -42,6 +42,7 @@ func take_hit(dir, kb):
 		health -= 2
 		velocity += dir * kb
 		flash(0.1)
+    $AudioStreamPlayer.play()
 	else:
 		if check_block(dir, shield_dir):
 			health -= 0
@@ -51,6 +52,7 @@ func take_hit(dir, kb):
 			health -= 2
 			velocity += dir * kb
 			flash(0.1)
+      $AudioStreamPlayer.play()
 			
 func check_block(swordd, shieldd):
 	var nswordd = swordd.rotated(PI)
@@ -183,12 +185,14 @@ func explosion(pos, emax, emin, ran, crit):
 				force = emin
 		velocity += (force_dir * force)
 		health -= 1
+		$AudioStreamPlayer.play()
 
 
 
 func _on_World_firesprite_hits_player(pos, emax, emin, ran, crit):
 	#print("got explositon pos: " + str(pos))
 	explosion(pos, emax, emin, ran, crit)
+	
 #	var force_dir = pos.direction_to(position)
 #	if force_dir == Vector2(0, 0):
 #		force_dir = Vector2(1, 0)
