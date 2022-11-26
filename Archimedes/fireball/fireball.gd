@@ -151,7 +151,7 @@ func _on_sword_swing_timer_timeout():
 
 	if dying == false:
 		$Timer.start()
-		#pass
+
 		
 		
 func _on_Timer_timeout():
