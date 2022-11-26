@@ -25,7 +25,6 @@ var air_speed = 60
 var speed = walk_speed
 var max_speed = max_walk_speed
 
-var yields = []
 
 var gravity = 13
 var fric = 60
@@ -118,12 +117,19 @@ func take_hit(dire, kb):
 		dying = true
 		$AudioStreamPlayer.play()
 		$Particles2D.visible = true
-		yield(get_tree().create_timer(1),"timeout")
-		queue_free()
+		$take_hit_timer.start()
+		
+		
+func _on_take_hit_timer_timeout():
+	queue_free()
 
 func flash(time):
 	material.set("shader_param/flash", 1.0)
-	yield(get_tree().create_timer(time), "timeout")
+	$flash_timer.wait_time = time
+	$flash_timer.start()
+
+	
+func _on_flash_timer_timeout():
 	material.set("shader_param/flash", 0.0)
 
 func swing_sword():
@@ -142,17 +148,22 @@ func _on_sword_swing_timer_timeout():
 
 
 	if dying == false:
-		yield(get_tree().create_timer(1),"timeout")
-		var dire = position.direction_to(player.position)
-		sword_swinging = true
-		$sword.visible = true
-		$sword.rotation = dire.angle() + PI / 2
-		$sword.position = dire * reach
-		yield(get_tree().create_timer(.4), "timeout")
-		$sword.visible = false
-		sword_swinging = false
-		struck = false
+		$Timer.start()
+		
+		
+func _on_Timer_timeout():
+	var dire = position.direction_to(player.position)
+	sword_swinging = true
+	$sword.visible = true
+	$sword.rotation = dire.angle() + PI / 2
+	$sword.position = dire * reach
+	$Timer2.start()
+	
 
+func _on_Timer2_timeout():
+	$sword.visible = false
+	sword_swinging = false
+	struck = false
 	
 func _integrate_forces(s):
 	var out = Input.is_action_pressed("ui_s") and en
@@ -190,10 +201,8 @@ func _integrate_forces(s):
 		
 		state = 0
 	#find if onfloor
-	var fx
 	for x in range(s.get_contact_count()):
 		if s.get_contact_local_normal(x).dot(up_dir) > 0.6:
-			fx = x
 			on_floor = true
 			jumping = false
 		#find if on left and right
@@ -349,7 +358,7 @@ func _integrate_forces(s):
 			prints("speed after apply wall_check: ", str(lv))
 	
 	if s_count >= 5 and state == 0:
-			prints(name, ": EMERGENCY UNFREEZE!!")
+			#prints(name, ": EMERGENCY UNFREEZE!!")
 #			uf_c += 1
 #			just_uf = true
 #			lv.y = 5 * uf_c
@@ -462,31 +471,18 @@ func fall_length(dire):
 	var count = 0
 	pos.x += dire
 	pos.y += 1
-	#print(str(pos))
-	#print(str(tile_type(pos)))
-	var i = 0
 	while(tile_type(pos) == -1):
-		
-#		prints("i: ", str(i))
-#		prints("pos: ", str(pos))
-#		prints("tiletype: ", str(tile_type(pos)))
-		var start_p = pos
 		pos.y += 1
 		count += 1
 		if (count * 32) > lava_height():
 			prints("count: ", str(count), "lava height:", lava_height())
 			return -1
-		i += 1
 	return count
 	
-func is_dip():
+func is_dip_next():
 	var next_floor = get_tile(Vector2(this_pos.x + (sight * dir), this_pos.y + 32))
 	return (tile_type(next_floor) == -1 and !is_wall())
 	
 func is_wall():
 	var next_floor = get_tile(Vector2(this_pos.x + (wall_sight * dir), this_pos.y))
 	return (tile_type(next_floor) != -1)
-		
-	
-
-

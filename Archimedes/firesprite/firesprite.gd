@@ -38,7 +38,7 @@ func realtimereset():
 func _physics_process(delta):
 # warning-ignore:return_value_discarded
 	realtimereset()
-	var gravity = Vector2(0, 400)
+	#var gravity = Vector2(0, 400)
 	if coasting:
 #		if (player - self.position).length() < collide_range:
 #			coasting = false
