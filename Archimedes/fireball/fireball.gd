@@ -80,6 +80,7 @@ var reach = 15
 var struck = false
 var strike_range = 70
 onready var sword_a = get_node("sword/Area2D")
+var burning = false
 
 var vx = 0
 
@@ -113,7 +114,8 @@ func take_hit(dire, kb):
 	knockback = kb
 	flash(0.1)
 	prints(name, ": hit health: ", health)
-	if health <= 0:
+	if health <= 0 and burning == false:
+		burning = true
 		dying = true
 		$AudioStreamPlayer.play()
 		$Particles2D.visible = true
@@ -149,6 +151,7 @@ func _on_sword_swing_timer_timeout():
 
 	if dying == false:
 		$Timer.start()
+		#pass
 		
 		
 func _on_Timer_timeout():
@@ -368,14 +371,18 @@ func _integrate_forces(s):
 	i += 1
 	knocked = false
 	
-	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
-		yield(get_tree().create_timer(1),"timeout")
+	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !burning:
+		#$swing_delay.start()
 		swing_sword()
+		
 	if sword_swinging:
 		for a in sword_a.get_overlapping_bodies():
 			if a.is_in_group("player") and !struck:
 				struck = true
 				get_parent().hit_enemy(a, position.direction_to(a.position), knockback)
+
+func _on_swing_delay_timeout():
+	swing_sword()
 
 func switch_x_dir():
 	if dir == 1:
