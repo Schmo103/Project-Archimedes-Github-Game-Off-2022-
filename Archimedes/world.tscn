@@ -1,4 +1,6 @@
-[gd_scene load_steps=37 format=2]
+
+[gd_scene load_steps=36 format=2]
+
 
 [ext_resource path="res://art/lava_pixel.png" type="Texture" id=1]
 [ext_resource path="res://world/lava.gd" type="Script" id=2]
@@ -10,7 +12,6 @@
 [ext_resource path="res://fireball.tscn" type="PackedScene" id=8]
 [ext_resource path="res://sound/random.wav" type="AudioStream" id=9]
 [ext_resource path="res://screen_joystick.tscn" type="PackedScene" id=10]
-[ext_resource path="res://art/test_cave.jpg" type="Texture" id=11]
 
 [sub_resource type="Shader" id=16]
 code = "shader_type canvas_item;
@@ -430,7 +431,6 @@ shader = SubResource( 19 )
 script = ExtResource( 6 )
 
 [node name="background" type="ColorRect" parent="."]
-visible = false
 margin_left = -110.0
 margin_top = -156.0
 margin_right = 1050.0
@@ -487,16 +487,6 @@ position = Vector2( 450, 200 )
 
 [node name="player" parent="." instance=ExtResource( 5 )]
 position = Vector2( 325, 260 )
-
-[node name="ParallaxBackground" type="ParallaxBackground" parent="player"]
-
-[node name="ParallaxLayer" type="ParallaxLayer" parent="player/ParallaxBackground"]
-motion_scale = Vector2( 1, 2 )
-motion_mirroring = Vector2( 1200, 675 )
-
-[node name="Sprite" type="Sprite" parent="player/ParallaxBackground/ParallaxLayer"]
-position = Vector2( 507, -123 )
-texture = ExtResource( 11 )
 
 [node name="fire_sprite_timer" type="Timer" parent="."]
 
