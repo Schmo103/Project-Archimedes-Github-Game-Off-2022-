@@ -105,7 +105,7 @@ func swing_sword(dir):
 
 
 func _physics_process(_delta):
-	var d
+	
 	var m_dir
 	var mouse_pos = get_viewport().get_mouse_position()
 	if mouse_pos.distance_to(js_pos) <= js_range:
@@ -161,14 +161,14 @@ func _physics_process(_delta):
 		#var rmpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 		shielded = true
 		$pointer.visible = false
-		d = position.direction_to(ab_m_pos)
+		#d = position.direction_to(ab_m_pos)
 		shield.swing_shield(m_dir)
 	if Input.is_action_just_released("ui_rclick"):
 		shielded = false
 		shield.lower_shield()
 	if Input.is_action_just_pressed("ui_lclick") and !shielded:
 		#var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
-		d = position.direction_to(ab_m_pos)
+		#d = position.direction_to(ab_m_pos)
 		swing_sword(m_dir)
 	if is_on_floor():
 		if velocity.y > 1:
