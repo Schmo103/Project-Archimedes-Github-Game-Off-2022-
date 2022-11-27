@@ -1,4 +1,6 @@
-[gd_scene load_steps=28 format=2]
+
+[gd_scene load_steps=36 format=2]
+
 
 [ext_resource path="res://art/lava_pixel.png" type="Texture" id=1]
 [ext_resource path="res://world/lava.gd" type="Script" id=2]
@@ -355,6 +357,59 @@ points = PoolVector2Array( 0, 0, 32, 0, 31.8403, 16.8953, 0, 16.8953 )
 } ]
 12/z_index = 0
 
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+uniform float flash: hint_range(0, 1);
+uniform vec4 color :hint_color = vec4(1.0, 1.0, 1.0, 1.0);
+
+void fragment() {
+	vec4 pixelcolor = texture(TEXTURE, UV);
+	COLOR = mix(pixelcolor, color, flash);
+	COLOR.a *= pixelcolor.a;
+}"
+
+[sub_resource type="ShaderMaterial" id=22]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=23]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=24]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=25]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=26]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=27]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="ShaderMaterial" id=28]
+resource_local_to_scene = true
+shader = SubResource( 5 )
+shader_param/flash = 0.0
+shader_param/color = Color( 1, 1, 1, 1 )
+
 [sub_resource type="Environment" id=18]
 background_mode = 4
 tonemap_mode = 3
@@ -398,28 +453,36 @@ tile_data = PoolIntArray( -2490328, 12, 0, -2490327, 11, 0, -2490326, 2, 0, -242
 script = ExtResource( 7 )
 
 [node name="Fireball" parent="." instance=ExtResource( 8 )]
+material = SubResource( 22 )
 position = Vector2( 59, 283 )
 en = true
 
 [node name="Fireball2" parent="." instance=ExtResource( 8 )]
+material = SubResource( 23 )
 position = Vector2( 214, 56 )
 
 [node name="Fireball3" parent="." instance=ExtResource( 8 )]
+material = SubResource( 24 )
 position = Vector2( 0, -451 )
 
 [node name="Fireball4" parent="." instance=ExtResource( 8 )]
+material = SubResource( 25 )
 position = Vector2( 299, -278 )
 
 [node name="Fireball5" parent="." instance=ExtResource( 8 )]
+material = SubResource( 26 )
 position = Vector2( 628, -134 )
 
 [node name="Fireball6" parent="." instance=ExtResource( 8 )]
+material = SubResource( 27 )
 position = Vector2( 634, 198 )
 
 [node name="Fireball7" parent="." instance=ExtResource( 8 )]
+material = SubResource( 28 )
 position = Vector2( 875, 24 )
 
 [node name="Fireball8" parent="." instance=ExtResource( 8 )]
+
 position = Vector2( 1089, -1153 )
 
 [node name="Fireball9" parent="." instance=ExtResource( 8 )]
@@ -431,8 +494,12 @@ position = Vector2( 939, -1213 )
 [node name="Fireball11" parent="." instance=ExtResource( 8 )]
 position = Vector2( 479, -1147 )
 
+material = SubResource( 28 )
+position = Vector2( 450, 200 )
+
+
 [node name="player" parent="." instance=ExtResource( 5 )]
-position = Vector2( 432, 208 )
+position = Vector2( 325, 260 )
 
 [node name="fire_sprite_timer" type="Timer" parent="."]
 
