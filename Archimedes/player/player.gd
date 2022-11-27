@@ -25,7 +25,7 @@ var shield_dir = Vector2()
 var max_shield_angle = 0.4 #the closer this is to zero, the narrower the range the shield blocks
 
 var game_over = false
-var health = 30
+var health = 100
 
 onready var world = get_parent()
 onready var sword_a = get_node("sword/Area2D")
@@ -43,7 +43,7 @@ func _ready():
 
 func take_hit(dir, kb):
 	if !shielded:
-		health -= 2
+		health -= 10
 		velocity += dir * kb
 		flash(0.1)
 		$AudioStreamPlayer.play()
@@ -210,7 +210,7 @@ func explosion(pos, emax, emin, ran, crit):
 			if force < emin:
 				force = emin
 		velocity += (force_dir * force)
-		health -= 1
+		health -= 5
 		$AudioStreamPlayer.play()
 
 
