@@ -72,6 +72,8 @@ onready var ray_rdown = $raycast_rdown
 onready var ray_lup = $RayCast_uleft
 onready var ray_rup = $RayCast_uright
 
+onready var animation = $AnimationPlayer
+
 var knockback = 200
 var knocked = false
 var knock_dir = Vector2(1, 0)
@@ -85,6 +87,7 @@ var vx = 0
 
 func _ready():
 	this_pos = position
+	animation.play('Enemy_Idle')
 	
 func _physics_process(_delta):
 	if first:
@@ -369,7 +372,9 @@ func _integrate_forces(s):
 	knocked = false
 	
 	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
-		yield(get_tree().create_timer(1),"timeout")
+#		animation.stop()
+		animation.play('Enemy_Attack')
+		yield(get_tree().create_timer(0.8),"timeout")
 		swing_sword()
 	if sword_swinging:
 		for a in sword_a.get_overlapping_bodies():
