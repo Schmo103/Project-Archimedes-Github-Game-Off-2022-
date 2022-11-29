@@ -176,20 +176,13 @@ wait_time = 0.2
 [node name="Timer2" type="Timer" parent="."]
 wait_time = 0.4
 
-
-
 [node name="swing_delay" type="Timer" parent="."]
 wait_time = 0.5
-
-
-
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Enemy_Attack = ExtResource( 8 )
 anims/Enemy_Idle = ExtResource( 1 )
 anims/RESET = SubResource( 7 )
-
-
 
 [connection signal="timeout" from="sword_swing_timer" to="." method="_on_sword_swing_timer_timeout"]
 [connection signal="timeout" from="flash_timer" to="." method="_on_flash_timer_timeout"]
