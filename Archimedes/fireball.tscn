@@ -92,9 +92,7 @@ custom_integrator = true
 contacts_reported = 5
 script = ExtResource( 2 )
 
-
 [node name="shader" type="Sprite" parent="."]
-
 visible = false
 material = SubResource( 3 )
 position = Vector2( 0, -1 )
@@ -179,8 +177,10 @@ wait_time = 0.2
 wait_time = 0.4
 
 
+
 [node name="swing_delay" type="Timer" parent="."]
 wait_time = 0.5
+
 
 
 
@@ -188,10 +188,6 @@ wait_time = 0.5
 anims/Enemy_Attack = ExtResource( 8 )
 anims/Enemy_Idle = ExtResource( 1 )
 anims/RESET = SubResource( 7 )
-
-
-
-
 
 
 
