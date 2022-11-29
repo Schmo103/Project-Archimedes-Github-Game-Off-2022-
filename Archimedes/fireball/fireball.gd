@@ -72,6 +72,8 @@ onready var ray_rdown = $raycast_rdown
 onready var ray_lup = $RayCast_uleft
 onready var ray_rup = $RayCast_uright
 
+onready var animation = $AnimationPlayer
+
 var knockback = 200
 var knocked = false
 var knock_dir = Vector2(1, 0)
@@ -86,6 +88,7 @@ var vx = 0
 
 func _ready():
 	this_pos = position
+	animation.play('Enemy_Idle')
 	
 func _physics_process(_delta):
 	if first:
@@ -375,7 +378,10 @@ func _integrate_forces(s):
 	i += 1
 	knocked = false
 	
-	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !burning:
+
+	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
+#		animation.stop()
+		animation.play('Enemy_Attack')
 		#$swing_delay.start()
 		swing_sword()
 		
