@@ -90,6 +90,10 @@ func _ready():
 func _physics_process(_delta):
 	if first:
 		player = get_parent().player
+		lava = get_parent().lava
+	if position.y - 50 > lava_height():
+		prints(name, ": fell")
+		queue_free()
 	old_pos = this_pos
 	this_pos = position
 	if old_pos == this_pos:
@@ -113,7 +117,6 @@ func take_hit(dire, kb):
 	knock_dir = dire
 	knockback = kb
 	flash(0.1)
-	prints(name, ": hit health: ", health)
 	if health <= 0 and burning == false:
 		burning = true
 		dying = true
@@ -137,6 +140,7 @@ func _on_flash_timer_timeout():
 func swing_sword():
 
 	var dire = position.direction_to(player.position)
+	dire = quadrise(dire)
 	sword_swinging = true
 	$sword.visible = true
 	$sword.rotation = dire.angle() + PI / 2
@@ -494,3 +498,15 @@ func is_dip_next():
 func is_wall():
 	var next_floor = get_tile(Vector2(this_pos.x + (wall_sight * dir), this_pos.y))
 	return (tile_type(next_floor) != -1)
+	
+func quadrise(dire):
+	if dire.dot(Vector2(0, -1)) >= 0.5:
+		return Vector2(0, -1)
+	elif dire.dot(Vector2(0, 1)) >= 0.5:
+		return Vector2(0, 1)
+	elif dire.dot(Vector2(1, 0)) >= 0.5:
+		return Vector2(1, 0)
+	elif dire.dot(Vector2(-1, 0)) >= 0.5:
+		return Vector2(-1, 0)
+	else:
+		return Vector2(0, -1)
