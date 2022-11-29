@@ -9,12 +9,12 @@ var test_chunk2 = [12,2,100,8,10]
 var chunk3 =  [12, 3, 100, 4, 5, 3, 100, 4, 5, 5, 3, 100, 4, 5, 5, 5, 3]
 var chunk1 =    [3, 101, 101, 101, 101, 7, 100, 4, 3, 101, 101, 7, 6, 100, 4, 5, 3, 7, 5, 6, 5]
 var jump_min = Vector2(0, 1)
-var jump_max = Vector2(4, 5)
+var jump_max = Vector2(4, 4)
 var builder = Vector2(7, 8)
 
-var en1 =  [ Vector2(205, 44), Vector2(55, 42), Vector2(14, 12)]
+#var en1 =  [ Vector2(205, 44), Vector2(55, 42), Vector2(14, 12)]
 export var placer = Vector2(11,9)
-var direction = 0
+var direction = 1 #1 is right, -1 is left
 var ready = true
 #onready var time = $Timer
 var choice
@@ -45,13 +45,15 @@ class prefab:
 	var terrain
 	var world
 	var enemy
+	var size_mod : Vector2
 	var size_of : Vector2
 	
-	func _init(l, terr, w, enem):
+	func _init(l, s, terr, w, enem):
 		self.land = l
 		self.terrain = terr
 		self.world = w
 		self.enemy = enem
+		self.size_mod = s
 		dimensions()
 		
 	func dimensions():
@@ -72,13 +74,13 @@ class prefab:
 					leng_x = row.size()
 				row = []
 		leng_y = segs.size()
-		size_of = Vector2(leng_x, leng_y)
+		size_of = Vector2(leng_x, leng_y) + size_mod
 #		prints("sizeof:", size_of)
 
 		
 	func draw(pos):
 #		prints("initial pos:", str(pos))
-		pos = pos - size_of + Vector2(1, 1)
+		pos = pos - size_of + size_mod + Vector2(1, 1)
 #		prints("offset:", str(Vector2(1, 1) - size_of))
 		var brg = pos
 		var en
@@ -108,18 +110,33 @@ class prefab:
 			world.add_child(en)
 			
 	func draw_left(p):
-		p.x = p.x + size_of.x - 2
+		p.x = p.x + size_of.x + size_mod.x - 2
 		draw(p)
 
 
 
 #prefabs declared
-onready var jump = prefab.new( [12, 11, 2, 100, 100, 101, 101, 101, 101, 101, 101, 101, 102, 100, 101, 101, 101, 101, 101, 101, 12, 11, 2], terrain, world, fireball)
-onready var prefab1 = prefab.new(chunk1, terrain, world, fireball)
-onready var basic_plat1 = prefab.new(test_chunk, terrain, world, fireball)
-onready var ebasic_plat1 = prefab.new( [101, 102, 100, 12, 11, 2, 100, 8, 9, 10], terrain, world, fireball)
+onready var jump = prefab.new([12, 11, 2, 100, 100, 101, 101, 101, 101, 101, 101, 101, 102, 100, 101, 101, 101, 101, 101, 101, 12, 11, 2], Vector2(0, 0), terrain, world, fireball)
+onready var prefab1 = prefab.new(chunk1, Vector2(0, 0), terrain, world, fireball)
 
+onready var basic_plat1 = prefab.new(test_chunk, Vector2(0, 0), terrain, world, fireball)
+onready var basic_plat2r = prefab.new( [12, 3, 100, 4, 5, 3, 100, 4, 5, 5, 11, 2, 100, 8, 9, 9, 9, 10], Vector2(0, 0), terrain, world, fireball)
+onready var basic_plat2l = prefab.new( [101, 101, 101, 7, 2, 100, 101, 101, 7, 5, 6, 100, 12, 11, 5, 11, 6, 100, 8, 9, 9, 9, 10], Vector2(0, 0), terrain, world, fireball)
+onready var en1 = prefab.new( [101, 102, 100, 12, 11, 2, 100, 8, 9, 10], Vector2(0, -1), terrain, world, fireball)
+onready var en2 = prefab.new( [101, 101, 101, 102, 100, 12, 11, 11, 11, 11, 2, 100, 8, 9, 9, 9, 9, 10], Vector2(0, -1), terrain, world, fireball)
+onready var switch1r = prefab.new( [ 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 8, 9, 9, 100, 100, 12, 2, 100, 8, 10, 100, 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 8, 9, 10], Vector2(0, 0), terrain, world, fireball)
+onready var switch1l = prefab.new( [12, 11, 2, 100, 8, 9, 9, 100, 100, 101, 101, 101, 101, 12, 2, 100, 101, 101, 101, 101, 10, 10, 100, 12, 11, 2, 100, 8, 9, 9], Vector2(0, 0), terrain, world, fireball)
+onready var switch2r = prefab.new([101, 101, 101, 101, 101, 101, 12, 2, 100, 101, 101, 101, 101, 101, 101, 8, 10, 100, 12, 11, 2, 100, 8, 9, 10, 100, 101, 101, 101, 101, 101, 12, 3, 100, 101, 101, 101, 101, 101, 4, 5, 3, 100, 101, 101, 101, 101, 101, 8, 9, 10], Vector2(0, 0), terrain, world, fireball)
+onready var switch2l = prefab.new( [12, 2, 100, 8, 10, 100, 101, 101, 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 101, 101, 8, 10, 10, 100, 101, 7, 2, 100, 7, 5, 6, 100, 8, 10, 10], Vector2(0, 0), terrain, world, fireball)
+
+var first_e : int = 2
+var first_s : int = 4
+onready var left_prefabs : Array = [basic_plat1, basic_plat2l, en1, en2, switch1l, switch2l]
+onready var right_prefabs : Array = [basic_plat1, basic_plat2r, en1, en2, switch1r, switch2r]
+var array_len : int
 func _ready():
+#	prints("size of en2", str(en2.size_of))
+	array_len = left_prefabs.size()
 	rob.randomize()
 	clear()
 	launch_pad() 
@@ -134,13 +151,33 @@ func _on_World_ready():
 	
 func generate_chunck():
 	#var builder_real = builder * 32
-	var end = builder.y - 32
+	var block : prefab
+	var num : int
+	var end : int = builder.y - 32
 	while(!(builder.y < end)):
-		#draw prefab
-		jump.draw(builder)
-		builder -= jump.size_of
+		if direction == 1:
+			#choose prefab
+			num = rob.randi() % array_len
+			block = right_prefabs[num]
+			#draw prefab
+			block.draw(builder)
+			if num >= first_s:
+				direction = -1
+				builder -= Vector2(direction * 2, block.size_of.y)
+			else:
+				builder -= block.size_of 
+		else:
+			num = rob.randi() % array_len
+			block = left_prefabs[num]
+			#draw prefab
+			block.draw_left(builder)
+			if num >= first_s:
+				direction = 1
+				builder -= Vector2(direction * 2, block.size_of.y)
+			else:
+				builder -= Vector2(-block.size_of.x, block.size_of.y)
 		#add jump
-		builder -= Vector2(1, 1)
+		#builder -= Vector2(1, 1)
 	flag = flag - (32- (end - builder.y)) * 32
 		
 		
