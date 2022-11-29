@@ -32,7 +32,9 @@ var m_offset = Vector2(-103, 35)
 onready var fog = get_node("wavy shader")
 onready var hud = $filler_hud
 onready var hud_offset = Vector2(-235, -150)
-
+var ready = false
+onready var ter = $terrain
+onready var flag = ter.flag
 	
 
 func spawner():
@@ -83,6 +85,8 @@ func _process(_delta):
 	#moves background and label to correct positions relative to camera
 	screen_x = OS.get_window_size().x
 	screen_y = OS.get_window_size().y
+	if player.position.y <= ter.flag:
+		ter.flag_passed()
 	
 	
 func hit_enemy(name, dire, kb):

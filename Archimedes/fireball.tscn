@@ -179,14 +179,19 @@ wait_time = 0.2
 wait_time = 0.4
 
 
+[node name="swing_delay" type="Timer" parent="."]
+wait_time = 0.5
+
+
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Enemy_Attack = ExtResource( 8 )
 anims/Enemy_Idle = ExtResource( 1 )
 anims/RESET = SubResource( 7 )
 
 
-[node name="swing_delay" type="Timer" parent="."]
-wait_time = 0.5
+
+
 
 
 
@@ -195,6 +200,4 @@ wait_time = 0.5
 [connection signal="timeout" from="take_hit_timer" to="." method="_on_take_hit_timer_timeout"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
 [connection signal="timeout" from="Timer2" to="." method="_on_Timer2_timeout"]
-
 [connection signal="timeout" from="swing_delay" to="." method="_on_swing_delay_timeout"]
-

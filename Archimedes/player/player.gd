@@ -30,10 +30,15 @@ var health = 100
 onready var world = get_parent()
 onready var sword_a = get_node("sword/Area2D")
 onready var shield = $lowered_shield
+var shift = false
 
 var js_pos = Vector2(900, 480)
 var js_range = 104
 var in_bubble = false
+
+export var debug = false
+export var bubble_enabled = true
+
 
 func _ready():
 	$Camera2D.current = true #make camera "the camera"
@@ -83,7 +88,6 @@ func set_sword_left(): #puts sword in left position
 		$sword.rotation_degrees = -26.4
 
 func die(): #function cleanup after death and display alert
-	print("You have died")
 	get_tree().paused = true
 	world.get_node("filler_hud").text = "Health: 0"
 	world.get_node("death_note").visible = true
@@ -102,21 +106,34 @@ func swing_sword(dir):
 		set_sword_right()
 	else:
 		set_sword_left()
-
+		
+func quadrise(dire):
+	if dire.dot(Vector2(0, -1)) >= 0.5:
+		return Vector2(0, -1)
+	elif dire.dot(Vector2(0, 1)) >= 0.5:
+		return Vector2(0, 1)
+	elif dire.dot(Vector2(1, 0)) >= 0.5:
+		return Vector2(1, 0)
+	elif dire.dot(Vector2(-1, 0)) >= 0.5:
+		return Vector2(-1, 0)
+	else:
+		return Vector2(0, -1)
 
 func _physics_process(_delta):
 	
 	var m_dir
 	var mouse_pos = get_viewport().get_mouse_position()
-	if mouse_pos.distance_to(js_pos) <= js_range:
+	if mouse_pos.distance_to(js_pos) <= js_range and bubble_enabled:
 		in_bubble = true
 	else:
 		in_bubble = false
 	var ab_m_pos = mouse_pos + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
 	if !in_bubble:
-		 m_dir = position.direction_to(ab_m_pos)
+		m_dir = position.direction_to(ab_m_pos)
+		m_dir = quadrise(m_dir)
 	else:
 		m_dir = js_pos.direction_to(mouse_pos)
+		m_dir = quadrise(m_dir)
 	$pointer.rotation = m_dir.angle() + PI / 2
 	$pointer.position = m_dir * pointer_range
 		
@@ -157,19 +174,24 @@ func _physics_process(_delta):
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
 		jump = true
-	if Input.is_action_pressed("ui_rclick"):
-		#var rmpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
+	#shit input for shield
+	if Input.is_action_pressed("ui_shift"):
+		shift = true
+	if Input.is_action_just_released("ui_shift"):
+		shift = false
+		shielded = false
+		shield.lower_shield()
+	#mouse input for shield and sword
+	if Input.is_action_pressed("ui_rclick") and !sword_swinging:
 		shielded = true
 		$pointer.visible = false
-		#d = position.direction_to(ab_m_pos)
 		shield.swing_shield(m_dir)
 	if Input.is_action_just_released("ui_rclick"):
 		shielded = false
 		shield.lower_shield()
-	if Input.is_action_just_pressed("ui_lclick") and !shielded:
-		#var mpos = get_viewport().get_mouse_position() + $Camera2D.get_camera_screen_center() - (OS.get_real_window_size() / 2)
-		#d = position.direction_to(ab_m_pos)
+	if Input.is_action_just_pressed("ui_lclick") and !shielded and !sword_swinging:
 		swing_sword(m_dir)
+			
 	if is_on_floor():
 		if velocity.y > 1:
 			velocity.y = 0 #if on floor, gravity doesnt continue increasing
@@ -180,7 +202,17 @@ func _physics_process(_delta):
 	if is_on_ceiling():
 		if velocity.y < -1:
 			velocity.y = 0
-	move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false) #moves player
+	if !debug:
+		move_and_slide(velocity, Vector2(0, -1), false, 4, 0.785398, false) #moves player
+	else:
+		if Input.is_action_pressed("ui_up"):
+			move_and_slide(Vector2(0, -400))
+		if Input.is_action_pressed("ui_down"):
+			move_and_slide(Vector2(0, 400))
+		if Input.is_action_pressed("ui_left"):
+			move_and_slide(Vector2(-400, 0))
+		if Input.is_action_pressed("ui_right"):
+			move_and_slide(Vector2(400, 0))
 
 	#check if still alive
 	if position.y >= get_parent().get_node("Lava").HEIGHT or health <= 0:
@@ -218,17 +250,3 @@ func explosion(pos, emax, emin, ran, crit):
 func _on_World_firesprite_hits_player(pos, emax, emin, ran, crit):
 	#print("got explositon pos: " + str(pos))
 	explosion(pos, emax, emin, ran, crit)
-	
-#	var force_dir = pos.direction_to(position)
-#	if force_dir == Vector2(0, 0):
-#		force_dir = Vector2(1, 0)
-#	var mag = (pos - position).length()
-#	var force
-#	if !(mag > ran):
-#		if mag <= crit:
-#			force = emax
-#		else:
-#			force = (ran - mag) / emax
-#			if force < emin:
-#				force = emin
-#		velocity += (force_dir * force)
