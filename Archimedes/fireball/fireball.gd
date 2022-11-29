@@ -378,8 +378,8 @@ func _integrate_forces(s):
 	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
 #		animation.stop()
 		animation.play('Enemy_Attack')
-		#$swing_delay.start()
-		swing_sword()
+		$swing_delay.start()
+#		swing_sword()
 		
 	if sword_swinging:
 		for a in sword_a.get_overlapping_bodies():
