@@ -83,12 +83,30 @@ var struck = false
 var strike_range = 70
 onready var sword_a = get_node("sword/Area2D")
 var burning = false
+var this_im : int = 0 #0 is idle 2 is attack 3 is down attack 4 is up attack
+onready var idle_im : Node = $idle_anim
+onready var attack_im : Node = $attack_anim
+onready var down_im : Node = $down_anim
+onready var up_im : Node = $up_anim
+onready var walk_im : Node = $walk_im
+onready var im_array : Array = [idle_im, walk_im, attack_im, down_im, up_im]
+var attack_anim_running : bool = false
+var anim_facing : int = -1 #-1 is lwft 1 is right
 
 var vx = 0
 
 func _ready():
 	this_pos = position
-	animation.play('Enemy_Idle')
+	change_im(1)
+	animation.play("Enemy_Walk")
+	for c in im_array:
+		c.flip_h = !c.flip_h
+	
+func change_im(num : int):
+	im_array[this_im].visible = false
+	im_array[num].visible = true
+	this_im = num
+	
 	
 func _physics_process(_delta):
 	if first:
@@ -125,6 +143,7 @@ func take_hit(dire, kb):
 		dying = true
 		$AudioStreamPlayer.play()
 		$Particles2D.visible = true
+		get_parent().enemy_killed()
 		$take_hit_timer.start()
 		
 		
@@ -145,12 +164,32 @@ func swing_sword():
 	var dire = position.direction_to(player.position)
 	dire = quadrise(dire)
 	sword_swinging = true
-	$sword.visible = true
+	#$sword.visible = true
 	$sword.rotation = dire.angle() + PI / 2
 	$sword.position = dire * reach
+	if dire == Vector2(1, 0) or dire == Vector2(-1, 0):
+		change_im(2)
+		animation.play('Enemy_Attack')
+	elif dire == Vector2(0, 1):
+		change_im(3)
+		animation.play("Enemy_Down")
+	elif dire == Vector2(0, -1):
+		change_im(4)
+		animation.play("Enemy_Up")
+	#anim_code_here
+	#attack_anim_running = true
+#	$attack_anim.visible = true
+#	$idle_anim.visible = false
+#	animation.play('Enemy_Attack')
 	$sword_swing_timer.start()
 	
 func _on_sword_swing_timer_timeout():
+	animation.stop()
+	change_im(1)
+	animation.play("Enemy_Walk")
+	#anim_code_here
+#	$attack_anim.visible = false
+#	$idle_anim.visible = true
 	$sword.visible = false
 	sword_swinging = false
 	struck = false
@@ -164,7 +203,7 @@ func _on_sword_swing_timer_timeout():
 func _on_Timer_timeout():
 	var dire = position.direction_to(player.position)
 	sword_swinging = true
-	$sword.visible = true
+	#$sword.visible = true
 	$sword.rotation = dire.angle() + PI / 2
 	$sword.position = dire * reach
 	$Timer2.start()
@@ -381,8 +420,10 @@ func _integrate_forces(s):
 
 	if (this_pos - player.position).length() <= strike_range and !sword_swinging and !dying:
 #		animation.stop()
-		animation.play('Enemy_Attack')
+		#anim_code_here
+#		sword_swinging = true
 #		$swing_delay.start()
+		
 		swing_sword()
 		
 	if sword_swinging:
@@ -395,6 +436,8 @@ func _on_swing_delay_timeout():
 	swing_sword()
 
 func switch_x_dir():
+	for c in im_array:
+		c.flip_h = !c.flip_h
 	if dir == 1:
 		dir = -1
 	else:
@@ -516,3 +559,9 @@ func quadrise(dire):
 		return Vector2(-1, 0)
 	else:
 		return Vector2(0, -1)
+
+
+func _on_Timer3_timeout():
+#	change_im(1)
+#	animation.play("Enemy_ّWalk")
+	pass

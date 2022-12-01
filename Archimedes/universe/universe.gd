@@ -8,6 +8,8 @@ var current_scene = "menu"
 var owens_way = true
 var lava_on = false
 var spawning = true
+var score : int = 0
+var high_score : int = 0
 
 func to_world():
 	get_tree().set_pause(false)
@@ -21,6 +23,10 @@ func to_world():
 	
 func to_menu():
 	get_tree().set_pause(false)
+	score = get_node(current_scene).fscore
+	if score > high_score:
+		high_score = score
+	prints("score:", str(score), "high:", str(high_score))
 	var m = menu.instance()
 	m.owens = owens_way
 	m.lava_on = lava_on

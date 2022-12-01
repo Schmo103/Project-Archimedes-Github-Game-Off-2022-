@@ -8,8 +8,8 @@ var test_chunk = [12,11,2,100,8,9,10]
 var test_chunk2 = [12,2,100,8,10]
 var chunk3 =  [12, 3, 100, 4, 5, 3, 100, 4, 5, 5, 3, 100, 4, 5, 5, 5, 3]
 var chunk1 =    [3, 101, 101, 101, 101, 7, 100, 4, 3, 101, 101, 7, 6, 100, 4, 5, 3, 7, 5, 6, 5]
-var jump_min = Vector2(0, 1)
-var jump_max = Vector2(4, 4)
+var jump_min = Vector2(1, 0)
+var jump_max = Vector2(4, 1)
 var builder = Vector2(7, 8)
 
 #var en1 =  [ Vector2(205, 44), Vector2(55, 42), Vector2(14, 12)]
@@ -33,18 +33,21 @@ var flag = 0
 
 		
 func launch_pad():
-	var x = player_tile.x - 2
-	while(x < player_tile.x + 2):
-		set_cell(x, player_tile.y, 5)
-		x += 1
+#	var x = player_tile.x - 2
+#	while(x < player_tile.x + 2):
+#		set_cell(x, player_tile.y, 5)
+#		x += 1
+		var strt = prefab.new(test_chunk, Vector2(0, 0), terrain, world, fireball)
+		strt.draw(player_tile + Vector2(1, 1))
+	
 
 	
 class prefab:
 	
 	var land : Array
-	var terrain
+	var terrain 
 	var world
-	var enemy
+	var enemy : PackedScene
 	var size_mod : Vector2
 	var size_of : Vector2
 	
@@ -125,7 +128,7 @@ onready var basic_plat2l = prefab.new( [101, 101, 101, 7, 2, 100, 101, 101, 7, 5
 onready var en1 = prefab.new( [101, 102, 100, 12, 11, 2, 100, 8, 9, 10], Vector2(0, -1), terrain, world, fireball)
 onready var en2 = prefab.new( [101, 101, 101, 102, 100, 12, 11, 11, 11, 11, 2, 100, 8, 9, 9, 9, 9, 10], Vector2(0, -1), terrain, world, fireball)
 onready var switch1r = prefab.new( [ 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 8, 9, 9, 100, 100, 12, 2, 100, 8, 10, 100, 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 8, 9, 10], Vector2(0, 0), terrain, world, fireball)
-onready var switch1l = prefab.new( [12, 11, 2, 100, 8, 9, 9, 100, 100, 101, 101, 101, 101, 12, 2, 100, 101, 101, 101, 101, 10, 10, 100, 12, 11, 2, 100, 8, 9, 9], Vector2(0, 0), terrain, world, fireball)
+onready var switch1l = prefab.new( [12, 11, 2, 100, 8, 9, 9, 100, 100, 101, 101, 101, 101, 12, 2, 100, 101, 101, 101, 101, 8, 10, 100, 12, 11, 2, 100, 8, 9, 9], Vector2(0, 0), terrain, world, fireball)
 onready var switch2r = prefab.new([101, 101, 101, 101, 101, 101, 12, 2, 100, 101, 101, 101, 101, 101, 101, 8, 10, 100, 12, 11, 2, 100, 8, 9, 10, 100, 101, 101, 101, 101, 101, 12, 3, 100, 101, 101, 101, 101, 101, 4, 5, 3, 100, 101, 101, 101, 101, 101, 8, 9, 10], Vector2(0, 0), terrain, world, fireball)
 onready var switch2l = prefab.new( [12, 2, 100, 8, 10, 100, 101, 101, 101, 101, 101, 12, 11, 2, 100, 101, 101, 101, 101, 101, 8, 10, 10, 100, 101, 7, 2, 100, 7, 5, 6, 100, 8, 10, 10], Vector2(0, 0), terrain, world, fireball)
 
@@ -144,6 +147,7 @@ func _ready():
 
 	
 func _on_World_ready():
+	#en2.draw(Vector2(7, 8))
 	generate_chunck()
 	generate_chunck()
 	#generate_chunck()
@@ -152,6 +156,8 @@ func _on_World_ready():
 func generate_chunck():
 	#var builder_real = builder * 32
 	var block : prefab
+	var x_jump : int = 0
+	var y_jump : int = 0
 	var num : int
 	var end : int = builder.y - 32
 	while(!(builder.y < end)):
@@ -177,7 +183,7 @@ func generate_chunck():
 			else:
 				builder -= Vector2(-block.size_of.x, block.size_of.y)
 		#add jump
-		#builder -= Vector2(1, 1)
+		builder -= Vector2(1 * direction, 1)
 	flag = flag - (32- (end - builder.y)) * 32
 		
 		

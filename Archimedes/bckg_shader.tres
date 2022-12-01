@@ -1,0 +1,51 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=2]
+
+[sub_resource type="Shader" id=26]
+code = "shader_type canvas_item;
+uniform sampler2D text;
+uniform sampler2D grad;
+uniform float scroll_x : hint_range(0.0, 10.0) = -0.1;
+uniform float scroll_y : hint_range(0.0, 10.0) = -0.1;
+
+void fragment() {
+	vec4 col = texture(text, UV + TIME * vec2(scroll_x, scroll_y));
+	vec4 fcol = texture(grad, vec2(col.r, 1));
+	COLOR = fcol;
+}
+
+/* uniform vec2 scroll = vec2(0.1, 0.1);
+uniform vec2 scroll2 = vec2(0.2, 0.2);
+
+uniform sampler2D text2;
+uniform sampler2D col;
+
+void fragment() {
+	float noise1 = texture(TEXTURE, UV + scroll * TIME).r;
+	float noise2 = texture(text2, UV + scroll2 * TIME).r;
+	float energy = noise1 * noise2 - (1.0 - UV.y) * 0.09;
+	vec4 colr = texture(col, vec2(energy, 1.0));
+	COLOR = vec4(energy, energy, energy, 1.0);
+	COLOR = colr;
+} */"
+
+[sub_resource type="Gradient" id=25]
+offsets = PoolRealArray( 0.509677, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.296875, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=27]
+gradient = SubResource( 25 )
+
+[sub_resource type="OpenSimplexNoise" id=23]
+
+[sub_resource type="NoiseTexture" id=28]
+width = 1160
+height = 810
+seamless = true
+noise = SubResource( 23 )
+
+[resource]
+shader = SubResource( 26 )
+shader_param/scroll_x = 0.099
+shader_param/scroll_y = 0.099
+shader_param/text = SubResource( 28 )
+shader_param/grad = SubResource( 27 )

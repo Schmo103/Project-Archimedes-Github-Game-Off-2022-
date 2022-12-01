@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Enemy_Idle.tres" type="Animation" id=1]
 [ext_resource path="res://fireball/fireball.gd" type="Script" id=2]
@@ -9,6 +9,12 @@
 [ext_resource path="res://art/Archimedes-LavaEnemy-Idle.png" type="Texture" id=7]
 [ext_resource path="res://Enemy_Attack.tres" type="Animation" id=8]
 [ext_resource path="res://art/Archimedes-LavaEnemy-attack.png" type="Texture" id=9]
+[ext_resource path="res://Enemy_Down.png" type="Texture" id=10]
+[ext_resource path="res://Enemy_Down.tres" type="Animation" id=11]
+[ext_resource path="res://Enemy_Up.png" type="Texture" id=12]
+[ext_resource path="res://Enemy_Up.tres" type="Animation" id=13]
+[ext_resource path="res://Enemy_Walk.png" type="Texture" id=14]
+[ext_resource path="res://Enemy_Walk.tres" type="Animation" id=15]
 
 [sub_resource type="Shader" id=5]
 code = "shader_type canvas_item;
@@ -84,6 +90,42 @@ tracks/1/keys = {
 "update": 0,
 "values": [ 0 ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("down_anim:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("up_anim:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("walk_im:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
 
 [node name="Fireball" type="RigidBody2D" groups=["enemies"]]
 material = SubResource( 6 )
@@ -99,9 +141,25 @@ position = Vector2( 0, -1 )
 texture = ExtResource( 3 )
 
 [node name="attack_anim" type="Sprite" parent="."]
+visible = false
+use_parent_material = true
 position = Vector2( 1, -11 )
 scale = Vector2( 0.75, 0.75 )
 texture = ExtResource( 9 )
+hframes = 8
+
+[node name="down_anim" type="Sprite" parent="."]
+visible = false
+position = Vector2( 1, -11 )
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 10 )
+hframes = 8
+
+[node name="up_anim" type="Sprite" parent="."]
+visible = false
+position = Vector2( 1, -11 )
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 12 )
 hframes = 8
 
 [node name="idle_anim" type="Sprite" parent="."]
@@ -111,6 +169,12 @@ position = Vector2( 1, -11 )
 scale = Vector2( 0.75, 0.75 )
 texture = ExtResource( 7 )
 hframes = 8
+
+[node name="walk_im" type="Sprite" parent="."]
+position = Vector2( 1, -11 )
+scale = Vector2( 0.75, 0.75 )
+texture = ExtResource( 14 )
+hframes = 6
 
 [node name="sword" type="Sprite" parent="."]
 visible = false
@@ -165,7 +229,7 @@ visible = false
 position = Vector2( 0, 2 )
 
 [node name="sword_swing_timer" type="Timer" parent="."]
-wait_time = 0.2
+wait_time = 0.8
 
 [node name="flash_timer" type="Timer" parent="."]
 
@@ -177,12 +241,20 @@ wait_time = 0.2
 wait_time = 0.4
 
 [node name="swing_delay" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Enemy_Attack = ExtResource( 8 )
+anims/Enemy_Down = ExtResource( 11 )
 anims/Enemy_Idle = ExtResource( 1 )
+anims/Enemy_Up = ExtResource( 13 )
+anims/Enemy_Walk = ExtResource( 15 )
 anims/RESET = SubResource( 7 )
+
+[node name="Timer3" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
 
 [connection signal="timeout" from="sword_swing_timer" to="." method="_on_sword_swing_timer_timeout"]
 [connection signal="timeout" from="flash_timer" to="." method="_on_flash_timer_timeout"]
@@ -190,3 +262,4 @@ anims/RESET = SubResource( 7 )
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
 [connection signal="timeout" from="Timer2" to="." method="_on_Timer2_timeout"]
 [connection signal="timeout" from="swing_delay" to="." method="_on_swing_delay_timeout"]
+[connection signal="timeout" from="Timer3" to="." method="_on_Timer3_timeout"]

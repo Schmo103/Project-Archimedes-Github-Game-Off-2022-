@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://art/sword.png" type="Texture" id=1]
 [ext_resource path="res://art/icon.png" type="Texture" id=2]
@@ -9,6 +9,20 @@
 [ext_resource path="res://art/shield.png" type="Texture" id=7]
 [ext_resource path="res://art/pointer.png" type="Texture" id=8]
 [ext_resource path="res://sound/shield_block.wav" type="AudioStream" id=9]
+[ext_resource path="res://art/Up_Player.png" type="Texture" id=10]
+[ext_resource path="res://art/Attack_Player.png" type="Texture" id=11]
+[ext_resource path="res://art/Idle_Player.png" type="Texture" id=12]
+[ext_resource path="res://Player_Attack.tres" type="Animation" id=13]
+[ext_resource path="res://Player_Idle.tres" type="Animation" id=14]
+[ext_resource path="res://art/Down_Player.png" type="Texture" id=15]
+[ext_resource path="res://Player_Down.tres" type="Animation" id=16]
+[ext_resource path="res://Player_Up.tres" type="Animation" id=17]
+[ext_resource path="res://art/Player_Block.png" type="Texture" id=18]
+[ext_resource path="res://art/Player_Up_Block.png" type="Texture" id=19]
+[ext_resource path="res://art/Player_Down_Block.png" type="Texture" id=20]
+[ext_resource path="res://Player_Down_Block.tres" type="Animation" id=21]
+[ext_resource path="res://Player_Block.tres" type="Animation" id=22]
+[ext_resource path="res://Player_Up_Block.tres" type="Animation" id=23]
 
 [sub_resource type="Shader" id=19]
 code = "shader_type canvas_item;
@@ -33,6 +47,93 @@ extents = Vector2( 31, 31 )
 radius = 10.3297
 height = 31.874
 
+[sub_resource type="Animation" id=23]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("attack_anim:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("idle_im:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("up_anim:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("down_anim:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("block_im:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("down_shield_im:frame")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("up_shield_im:frame")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
 [node name="player" type="KinematicBody2D" groups=["player"]]
 material = SubResource( 20 )
 position = Vector2( 337, 224 )
@@ -40,6 +141,7 @@ scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
+visible = false
 use_parent_material = true
 texture = ExtResource( 2 )
 
@@ -52,7 +154,59 @@ zoom = Vector2( 0.5, 0.5 )
 smoothing_enabled = true
 smoothing_speed = 10.0
 
+[node name="up_anim" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 10 )
+hframes = 4
+
+[node name="down_anim" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 15 )
+hframes = 4
+
+[node name="attack_anim" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+rotation = -1.5708
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 11 )
+vframes = 8
+
+[node name="walk_im" type="Sprite" parent="."]
+
+[node name="idle_im" type="Sprite" parent="."]
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 12 )
+hframes = 8
+
+[node name="up_shield_im" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 19 )
+hframes = 3
+
+[node name="down_shield_im" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 20 )
+hframes = 3
+
+[node name="block_im" type="Sprite" parent="."]
+visible = false
+position = Vector2( 25, -30 )
+scale = Vector2( 2.5, 2.5 )
+texture = ExtResource( 18 )
+hframes = 3
+
 [node name="sword" type="Sprite" parent="."]
+visible = false
 use_parent_material = true
 position = Vector2( 34, -1 )
 rotation = 0.460767
@@ -64,6 +218,7 @@ texture = ExtResource( 1 )
 shape = SubResource( 21 )
 
 [node name="lowered_shield" type="Sprite" parent="."]
+visible = false
 use_parent_material = true
 position = Vector2( 36, 0 )
 scale = Vector2( 2, 2 )
@@ -71,6 +226,7 @@ texture = ExtResource( 7 )
 script = ExtResource( 6 )
 
 [node name="raised_shield" type="Sprite" parent="."]
+visible = false
 use_parent_material = true
 position = Vector2( -36, 2 )
 scale = Vector2( 2, 2 )
@@ -84,3 +240,13 @@ stream = ExtResource( 4 )
 
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 9 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Player_Attack = ExtResource( 13 )
+anims/Player_Block = ExtResource( 22 )
+anims/Player_Down = ExtResource( 16 )
+anims/Player_Down_Block = ExtResource( 21 )
+anims/Player_Idle = ExtResource( 14 )
+anims/Player_Up = ExtResource( 17 )
+anims/Player_Up_Block = ExtResource( 23 )
+anims/RESET = SubResource( 23 )
