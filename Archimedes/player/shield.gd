@@ -6,6 +6,7 @@ var low_shield_left_pos = Vector2(-36, 0)
 var high_shield_right_pos = Vector2(36, 0)
 var high_shield_left_pos = Vector2(-36, 0)
 
+onready var player = get_parent()
 onready var up_shield = get_parent().get_node("raised_shield")
 
 var shield = 0 #0 is down 1 is up
@@ -28,11 +29,11 @@ func swing_shield(dir):
 func raise_shield():
 	shield = 1
 	visible = false
-	up_shield.visible = true
+	#up_shield.visible = true
 	
 func lower_shield():
 	shield = 0
-	visible = true
+	#visible = true
 	up_shield.visible = false
 	if get_parent().sword_posi == 1:
 		set_shield_right()

@@ -15,7 +15,7 @@ var player_pos = Vector2()
 
 var sword_posi = 1 #-1 is left, 1 is right
 var sword_swinging = false
-var reach = 50
+var reach = 30
 var pointer_range = 50
 var struck = false
 var swing_dir = Vector2(0, -1)
@@ -38,9 +38,32 @@ var in_bubble = false
 
 export var debug = false
 export var bubble_enabled = true
+onready var animation = $AnimationPlayer
+
+var this_im : int = 0
+onready var attack_im : Node = $attack_anim
+onready var down_im : Node = $down_anim
+onready var up_im : Node = $up_anim
+onready var walk_im : Node = $walk_im
+onready var idle_im : Node = $idle_im
+onready var block_im = $block_im
+onready var down_block_im = $down_shield_im
+onready var up_block_im = $up_shield_im
+onready var im_array : Array = [idle_im, walk_im, attack_im, down_im, up_im, block_im, up_block_im, down_block_im]
+
+func change_im(num : int):
+	im_array[this_im].visible = false
+	im_array[num].visible = true
+	this_im = num
 
 
 func _ready():
+	animation.play("Player_Idle")
+	for c in im_array:
+			if c == attack_im:
+				c.flip_v = false
+			else:
+				c.flip_h = false
 	$Camera2D.current = true #make camera "the camera"
 	shield.lower_shield()
 	shield.set_shield_pos(sword_posi)
@@ -54,12 +77,12 @@ func take_hit(dir, kb):
 		$AudioStreamPlayer.play()
 	else:
 		if check_block(dir, shield_dir):
-			health -= 0
+			health -= 5
 			velocity += dir * kb / 2
 			$AudioStreamPlayer2.play()
 			#flash(0.1)
 		else:
-			health -= 2
+			health -= 10
 			velocity += dir * kb
 			flash(0.1)
 			$AudioStreamPlayer.play()
@@ -89,7 +112,7 @@ func set_sword_left(): #puts sword in left position
 
 func die(): #function cleanup after death and display alert
 	get_tree().paused = true
-	world.get_node("filler_hud").text = "Health: 0"
+	world.final_hud()
 	world.get_node("death_note").visible = true
 	world.get_node("menu").visible = true
 
@@ -99,13 +122,68 @@ func swing_sword(dir):
 	sword_swinging = true
 	$sword.rotation = dir.angle() + PI / 2
 	$sword.position = dir * reach
+	if dir == Vector2(1, 0):
+		change_im(2)
+		animation.play("Player_Attack")
+		if sword_posi == -1:
+			for c in im_array:
+				if c == attack_im:
+					c.flip_v = false
+				else:
+					c.flip_h = false
+				sword_posi = 1
+				c.position.x = 25
+	elif dir == Vector2(-1, 0):
+		change_im(2)
+		animation.play("Player_Attack")
+		if sword_posi == 1:
+			for c in im_array:
+				if c == attack_im:
+					c.flip_v = true
+				else:
+					c.flip_h = true
+				sword_posi = -1
+				c.position.x = -25
+	elif dir == Vector2(0, -1):
+		change_im(4)
+		animation.play("Player_Up")
+	elif dir == Vector2(0, 1):
+		change_im(3)
+		animation.play("Player_Down")
+	else:
+		change_im(2)
+		animation.play("Player_Attack")
 	yield(get_tree().create_timer(.2), "timeout")
+	animation.stop()
+	change_im(0)
+	animation.play("Player_Idle")
 	sword_swinging = false
 	struck = false
 	if sword_posi == 1:
 		set_sword_right()
+		for c in im_array:
+			if c == attack_im:
+				c.flip_v = false
+			else:
+				c.flip_h = false
+			c.position.x = 25
 	else:
 		set_sword_left()
+		for c in im_array:
+			if c == attack_im:
+				c.flip_v = true
+			else:
+				c.flip_h = true
+			c.position.x = -25
+		
+func get_tile(pos):
+	var x = pos.x - (int(pos.x) % 32)
+	var y = pos.y - (int(pos.y) % 32)
+	x /= 32
+	x = int(x)
+	y /= 32
+	y = int(y)
+	return Vector2(x, y)
 		
 func quadrise(dire):
 	if dire.dot(Vector2(0, -1)) >= 0.5:
@@ -163,6 +241,12 @@ func _physics_process(_delta):
 		elif (velocity.x > -MAXSPEED):
 			velocity.x = -MAXSPEED
 		set_sword_left()
+		for c in im_array:
+			if c == attack_im:
+				c.flip_v = true
+			else:
+				c.flip_h = true
+			c.position.x = -25
 		shield.set_shield_left()
 	if Input.is_action_pressed("ui_d"): #for moving right
 		if (velocity.x + speed <= MAXSPEED):
@@ -170,6 +254,12 @@ func _physics_process(_delta):
 		elif (velocity.x < MAXSPEED):
 			velocity.x = MAXSPEED
 		set_sword_right()
+		for c in im_array:
+			if c == attack_im:
+				c.flip_v = false
+			else:
+				c.flip_h = false
+			c.position.x = 25
 		shield.set_shield_right()
 	if Input.is_action_pressed("ui_accept") or Input.is_action_pressed("ui_w"):
 		#for jumping
@@ -182,11 +272,42 @@ func _physics_process(_delta):
 		shielded = false
 		shield.lower_shield()
 	#mouse input for shield and sword
-	if Input.is_action_pressed("ui_rclick") and !sword_swinging:
+	if Input.is_action_pressed("ui_rclick") and !sword_swinging and !shielded:
 		shielded = true
 		$pointer.visible = false
+		if m_dir == Vector2(-1, 0):
+			change_im(5)
+			animation.play("Player_Block")
+			if sword_posi == 1:
+				for c in im_array:
+					if c == attack_im:
+						c.flip_v = true
+					else:
+						c.flip_h = true
+					sword_posi = -1
+					c.position.x = -25
+		elif m_dir == Vector2(1, 0):
+			change_im(5)
+			animation.play("Player_Block")
+			if sword_posi == -1:
+				for c in im_array:
+					if c == attack_im:
+						c.flip_v = false
+					else:
+						c.flip_h = false
+					sword_posi = 1
+					c.position.x = 25
+		elif m_dir == Vector2(0, -1):
+			change_im(6)
+			animation.play("Player_Up_Block")
+		elif m_dir == Vector2(0, 1):
+			change_im(7)
+			animation.play("Player_Down_Block")
 		shield.swing_shield(m_dir)
 	if Input.is_action_just_released("ui_rclick"):
+		animation.stop()
+		change_im(0)
+		animation.play("Player_Idle")
 		shielded = false
 		shield.lower_shield()
 	if Input.is_action_just_pressed("ui_lclick") and !shielded and !sword_swinging:
