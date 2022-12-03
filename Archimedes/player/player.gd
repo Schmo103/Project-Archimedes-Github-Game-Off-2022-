@@ -111,6 +111,7 @@ func set_sword_left(): #puts sword in left position
 		$sword.rotation_degrees = -26.4
 
 func die(): #function cleanup after death and display alert
+	get_parent().get_node("menu/Label").text = 'Score ' + str(get_parent().fscore)
 	get_tree().paused = true
 	world.final_hud()
 	world.get_node("death_note").visible = true

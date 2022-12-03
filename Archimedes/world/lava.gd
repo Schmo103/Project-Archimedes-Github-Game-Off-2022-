@@ -8,9 +8,9 @@ export var lava_on = true
 var ignore : bool = true
 
 var sufferage : float = 0.5
-var gain : float = 0.1
+var gain : float = 0.4
 var max_speed : float = 4
-var start_speed = 0.5
+var start_speed = 1.75
 var speed = start_speed
 
 func _ready():

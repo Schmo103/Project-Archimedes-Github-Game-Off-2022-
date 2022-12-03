@@ -31,6 +31,7 @@ func to_menu():
 	m.owens = owens_way
 	m.lava_on = lava_on
 	m.spawning = spawning
+	m.hs = high_score
 	add_child(m)
 	get_node(current_scene).queue_free()
 	current_scene = m.name

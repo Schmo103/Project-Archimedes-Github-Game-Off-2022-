@@ -3,6 +3,7 @@ extends Node2D
 var owens = true
 var lava_on = true
 var spawning = true
+var hs = 0
 #script for menu
 func _on_Button_pressed():
 	if get_parent() == get_node("/root"):
@@ -13,6 +14,7 @@ func _on_Button_pressed():
 		
 func _ready():
 	update_buttons()
+	$Label3.text = 'HighScore ' + str(hs)
 
 func update_parent():
 	if get_parent() != get_node("/root"):
