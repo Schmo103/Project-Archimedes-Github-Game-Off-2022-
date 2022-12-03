@@ -58,7 +58,7 @@ var s_count = 0
 var just_uf = false
 var uf_c = 1
 
-var health = 3
+var health = 2
 var dying = false
 
 var hunting_enabled = true
@@ -160,28 +160,28 @@ func _on_flash_timer_timeout():
 	material.set("shader_param/flash", 0.0)
 
 func swing_sword():
-
-	var dire = position.direction_to(player.position)
-	dire = quadrise(dire)
-	sword_swinging = true
-	#$sword.visible = true
-	$sword.rotation = dire.angle() + PI / 2
-	$sword.position = dire * reach
-	if dire == Vector2(1, 0) or dire == Vector2(-1, 0):
-		change_im(2)
-		animation.play('Enemy_Attack')
-	elif dire == Vector2(0, 1):
-		change_im(3)
-		animation.play("Enemy_Down")
-	elif dire == Vector2(0, -1):
-		change_im(4)
-		animation.play("Enemy_Up")
-	#anim_code_here
-	#attack_anim_running = true
-#	$attack_anim.visible = true
-#	$idle_anim.visible = false
-#	animation.play('Enemy_Attack')
-	$sword_swing_timer.start()
+	if !burning:
+		var dire = position.direction_to(player.position)
+		dire = quadrise(dire)
+		sword_swinging = true
+		#$sword.visible = true
+		$sword.rotation = dire.angle() + PI / 2
+		$sword.position = dire * reach
+		if dire == Vector2(1, 0) or dire == Vector2(-1, 0):
+			change_im(2)
+			animation.play('Enemy_Attack')
+		elif dire == Vector2(0, 1):
+			change_im(3)
+			animation.play("Enemy_Down")
+		elif dire == Vector2(0, -1):
+			change_im(4)
+			animation.play("Enemy_Up")
+		#anim_code_here
+		#attack_anim_running = true
+	#	$attack_anim.visible = true
+	#	$idle_anim.visible = false
+	#	animation.play('Enemy_Attack')
+		$sword_swing_timer.start()
 	
 func _on_sword_swing_timer_timeout():
 	animation.stop()
